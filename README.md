@@ -15,7 +15,9 @@ e.g.
 </dependency>
 ```
 
-## add component scan. (make sure to add own package too)
+## Add component scan. 
+
+> Make sure to add own package too
 
 e.g.
 
