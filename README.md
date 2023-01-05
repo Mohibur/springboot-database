@@ -3,8 +3,7 @@
 ## Install Repository
 1. Clone this repository
 2. run `bash install.bash.sh`
-3. Include in project
-4. add dependency
+3. Include in project, add dependency
 
 e.g.
 
