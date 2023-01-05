@@ -56,7 +56,7 @@ class GeneralHTMLProcessor {
 
 	rm(target) {
 		this.#html.querySelectorAll(target).forEach(e => this.#html.removeChild(e));
-		return this;
+		return undefined;
 	}
 
 	id(v) {
@@ -88,9 +88,7 @@ class GeneralHTMLProcessor {
 		}
 		this.#html.addEventListener(e, f);
 	}
-	/*
-	* 
-	*/
+
 	text(v) {
 		if (v == undefined) return this.#html.innerText;
 		this.#html.innerText = d;
@@ -137,6 +135,7 @@ class GeneralHTMLProcessor {
 	rect() {
 		return this.#html.getBoundingClientRect();
 	}
+
 	max(v) {
 		if (v == undefined) return this.#html.max;
 		this.#html.max = v;
@@ -213,7 +212,7 @@ class GeneralHTMLProcessor {
 		else if (tagname == "td") this.#html.style.display = "table-cell";
 		else if (tagname == "col") this.#html.style.display = "table-column";
 		else if (tagname == "tr") this.#html.style.display = "table-row";
-		else if (tagname == "li") this.#html.style.display = "list-item"; z
+		else if (tagname == "li") this.#html.style.display = "list-item";
 	}
 
 	target(v) {
