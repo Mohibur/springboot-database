@@ -7,20 +7,17 @@ Date.prototype.formattedDate = function() {
 Date.prototype.jpFormattedDate = function() {
 	return (this.getFullYear()) + "年" + this.paddedMonth() + "月" + this.paddedMonth() + "日";
 }
+
 Date.prototype.toString = function() {
 	return this.formattedDate();
 }
 
 Date.prototype.getFullMonth = function() {
-	return ["January", "February", "March", "April", "May",
-		"June", "July", "August", "September", "October",
-		"November", "December"][this.getMonth()];
+	return ["January", "February", "March", "April", "May",	"June", "July", "August", "September", "October", "November", "December"][this.getMonth()];
 }
 
 Date.prototype.getShortMonth = function() {
-	return ["Jan", "Feb", "Mar", "Apr", "May",
-		"Jun", "Jul", "Aug", "Sep", "Oct",
-		"Nov", "Dec"][this.getMonth()];
+	return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][this.getMonth()];
 }
 
 Date.prototype.paddedMonth = function() {
@@ -105,8 +102,7 @@ Date.prototype.addYears = function(ny) {
 
 //\\ COMPARE
 Date.prototype.isSameMonth = function(d2) {
-	return this.getFullYear() == d2.getFullYear()
-		&& this.getMonth() == d2.getMonth()
+	return this.getFullYear() == d2.getFullYear() && this.getMonth() == d2.getMonth()
 }
 
 Date.prototype.isSameDate = function(d2) {
@@ -114,15 +110,15 @@ Date.prototype.isSameDate = function(d2) {
 }
 
 Date.prototype.isOldMonth = function(d) {
-	if ((d.getFullYear() < this.getFullYear()) || (d.getFullYear() == this.getFullYear() && d.getMonth() < this.getMonth()))
-		return true;
+	if ((d.getFullYear() < this.getFullYear()) || (d.getFullYear() == this.getFullYear() && d.getMonth() < this.getMonth())) return true;
 	return false;
 }
 
 Date.prototype.isFuture = function(d) {
-	return (this.getFullYear() == d.getFullYear() && this.getMonth() == d.getMonth() && this.getDate() < d.getDate()) ||
-		(this.getFullYear() == d.getFullYear() && this.getMonth() < d.getMonth()) || (this.getFullYear() > d.getFullYear())
-		;
+	return  this.getFullYear() < d.getFullYear() ||
+		(this.getFullYear() == d.getFullYear() && 
+		 	(this.getMonth() < d.getMonth() ||
+	        	(this.getMonth() == d.getMonth() && this.getDate() < d.getDate())));
 }
 
 Date.prototype.isSatOrSun = function() {
