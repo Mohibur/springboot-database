@@ -1,9 +1,10 @@
 # How to Use
+
 ## Install Repository
-### Clone this repository
-### run `bash install.bash.sh`
-## Include in project
-### add dependency
+1. Clone this repository
+2. run `bash install.bash.sh`
+3. Include in project
+4. add dependency
 
 e.g.
 
@@ -15,7 +16,7 @@ e.g.
 </dependency>
 ```
 
-### add component scan. (make sure to add own package too)
+## add component scan. (make sure to add own package too)
 
 e.g.
 
@@ -42,6 +43,6 @@ public class DemoApplication {
 ```
 
 
-# Tested on db
+## Tested on db
 
 1. h2
