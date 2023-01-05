@@ -1,0 +1,69 @@
+<script>
+	function assingClickToTableDiv() {
+		hideModifyColumn();
+		let ajax = new Ajax();
+		let divs = z.zz(".divclass");
+		divs.click(function() {
+			if(z(this).hasCls("notabledivclass")) return;
+			divs.rmCls("selected-table");
+			z(this).addCls("selected-table");
+			ajax.url("[[${path.TABLE}]]/").data("tableName", this.innerHTML)
+					.onSuccess(function(tblName) {
+						return function(d) {
+							hideModifyColumn();
+							processTableInfo(d, tblName);
+							z("#executionResult").html("");
+						}
+					}(z(this).html())).postJson();
+		});
+	}
+
+	function setExecutionTime(time) {
+		let cls = [ "execution-time" ];
+		if (!z("#executionTime").z("span").hasCls("execution-time-another"))
+			cls.push("execution-time-another");
+		z("#executionTime").html("").child("span").cls(cls).html(
+				"Execution time: " + time);
+	}
+
+	function processTableInfo(data, tblName) {
+		setExecutionTime(data.time);
+		z.zz("#cption").html(tblName);
+		let tableWindow = z("#tableWindow").html("");
+		z("#tableName").val(tblName);
+		z("#editor").val("SELECT * FROM " + tblName + ";");
+		z("#table-footer").show();
+		for (let i = 1; i < data.result.length; i++) {
+			let e = data.result[i];
+			var row = tableWindow.row();
+			row.cell().html(e[0]).addCls("column");
+			row.cell().html(e[1].replace("CHARACTER VARYING", "VARCHAR")).addCls("other");
+			row.cell().html(e[2]).addCls("other");
+			row.cell().html(e[3]).addCls("other");
+			row.cell().html(e[4]).addCls("other");
+			row.click(populateColumnEditor);
+		}
+	}
+	function populateColumnEditor() {
+		let f = z("form[name=modify-column]");
+		f.form("columnName").val(z(this).cell(0).html());
+		f.form("columnType").val(z(this).cell(1).html());
+		f.form("isNull").val(z(this).cell(2).html());
+		f.form("keyValue").val(z(this).cell(3).html());
+		f.form("defaultValue").val(z(this).cell(4).html());
+		z('#modify-column-table').show();
+	}
+
+	function resetTableDetail() {
+		z("#tableWindow").html("");
+		z("#cption").html("Select a table from the left");
+		z("#table-footer").hide();
+	}
+
+	function hideModifyColumn() {
+		z("#modify-column-table").hide();
+	}
+
+	// CALL
+	assingClickToTableDiv();
+</script>

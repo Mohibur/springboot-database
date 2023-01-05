@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<title th:text="${title}">title</title>
+<th:block th:insert="~{zznotforproductiondatabase/style}"></th:block>
+<script src="/database/js/general.js"></script>
+<script src="/database/js/ajax/ajax.js"></script>
+<script src="/database/js/ajax/httpstatus.js"></script>
+<script src="/database/js/ajax/mediatypes.js"></script>
+
+</head>
+<body>
+	<table>
+		<tr>
+			<td rowspan=2 style="vertical-align: top" id="tableNameList">
+				<div th:if="${tables.size() != 0}" class="divclass"
+					th:each="tbl: ${tables}" th:text="${tbl}" th:id="${tbl}"></div>
+				<div th:if="${tables.size() == 0}" class="notabledivclass" id="notable">No Table found</div>
+			</td>
+			<td style="vertical-align: top">
+				<div style="width: 100%">
+					<th:block
+						th:insert="~{zznotforproductiondatabase/img.execute.html}"></th:block>
+				</div> <textarea class="editor" id="editor"></textarea>
+			</td>
+			<td style="vertical-align: top;">
+				<table class="table-def">
+					<caption id="cption">Select a table from the left</caption>
+					<thead>
+						<tr class="title">
+							<td style="width: 200px;">FIELD</td>
+							<td style="width: 105px;">TYPE</td>
+							<td style="width: 55px;">NULL</td>
+							<td style="width: 105px;">KEY</td>
+							<td style="width: 180px;">DEFAULT</td>
+						</tr>
+					</thead>
+					<tbody id="tableWindow"></tbody>
+					<th:block th:insert="~{zznotforproductiondatabase/foot}"></th:block>
+				</table> <th:block th:insert="~{zznotforproductiondatabase/form}"></th:block>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 style="vertical-align: top">
+				<div>
+					<div id="executionTime">
+						<span></span>
+					</div>
+					<div id="executionResult"></div>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<table id="data-table">
+		<thead>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<th:block th:insert="~{zznotforproductiondatabase/javascript}"></th:block>
+</body>
+</html>

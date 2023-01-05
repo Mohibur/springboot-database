@@ -1,0 +1,37 @@
+<form name="modify-column">
+	<div style='display: none;' id="modify-column-table">
+		<table style='padding: 0px;'>
+			<tr>
+				<td class="left-td">Name</td>
+				<td class="right-td"><input id="columnName"></td>
+			</tr>
+			<tr>
+				<td class="left-td">Type</td>
+				<td class="right-td"><input id="columnType"></td>
+			</tr>
+			<tr>
+				<td class="left-td">Null</td>
+				<td class="right-td"><input type=radio name="isNull"
+					id="isNullYes" value="YES"> <label for=isNullYes>Yes</label>
+					<input type=radio name="isNull" id="isNullNo" value="NO"><label
+					for=isNullNo>No</label></td>
+			</tr>
+			<tr>
+				<td class="left-td">Key</td>
+				<td class="right-td"><input type=radio name="keyValue" value=""
+					id="kvNotApp"><label for=kvNotApp>None</label> <input
+					type=radio name="keyValue" value="KEY" id="kvPrimary"><label
+					for=kvPrimary>PrimaryKey</label> <input type=radio name="keyValue"
+					id="UNI"> <label for=kvUnique>Unique Key</label></td>
+			</tr>
+			<tr>
+				<td class="left-td">Default</td>
+				<td class="right-td"><input id="defaultValue"></td>
+			</tr>
+			<tr>
+				<td colspan=2 style="text-align: center"><input type="reset"
+					value="Close" onclick="hideModifyColumn()"></td>
+			</tr>
+		</table>
+	</div>
+</form>

@@ -1,0 +1,51 @@
+<tfoot id="table-footer" style="display: none">
+	<tr>
+		<td colspan=5 style="text-align: center"><input type="hidden"
+			id="tableName" />
+			<button id="selectQuery">Select</button>
+			<button id="insertButton">Insert</button>
+			<button id="deleteButton">Drop Table</button>
+			<button id="truncateButton">Truncate Table</button></td>
+	</tr>
+</tfoot>
+<script>
+z("#insertButton").click(function() {
+	let editor = z('#editor');
+	let cols = "";
+	let values = "";
+
+	z("#tableWindow").zz("tr").each(r => {
+		let v = r.cell(0).html();
+		if(cols == "") {
+			cols += "    \`" + v + "\`\n";
+		} else {
+			cols += "  , \`" + v + "\`\n";
+		}
+
+		if(values == "") {
+			values += "    <" + v + ">\n";
+		} else {
+			values += "  , <" + v + ">\n";
+		}
+	})
+	z('#editor').val ("INSERT INTO " + z("#tableName").val() + "(\n" + cols + ")\nVALUES(\n" + values +");");
+})
+
+	z("#deleteButton").click(function() {z('#editor').val('DROP TABLE ' +  z('#tableName').val() + ';')})
+
+	z("#truncateButton").click(function() {z('#editor').val('TRUNCATE TABLE ' +  z('#tableName').val() + ';');})
+
+	z("#selectQuery").click(function () {
+	let cols = "";
+
+	z("#tableWindow").zz("tr").each(r => {
+		let v = r.cell(0).html();
+		if(cols == "") {
+			cols += "    \`" + v + "\`\n";
+		} else {
+			cols += "  , \`" + v + "\`\n";
+		}
+	})
+	z('#editor').val ("SELECT \n" + cols + "FROM " + z("#tableName").val() + "\n;");
+})
+</script>
