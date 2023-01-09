@@ -17,7 +17,7 @@ Date.prototype.getFullMonth = function() {
 }
 
 Date.prototype.getShortMonth = function() {
-	return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][this.getMonth()];
+	return this.getFullMonth().slice(0, 3);
 }
 
 Date.prototype.paddedMonth = function() {
@@ -30,7 +30,7 @@ Date.prototype.getFullDay = function() {
 }
 
 Date.prototype.getShortDay = function() {
-	return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][this.getDay()];
+	return this.getFullDay().slice(0, 3);
 }
 
 Date.prototype.printCalendarFirstDate = function() {
