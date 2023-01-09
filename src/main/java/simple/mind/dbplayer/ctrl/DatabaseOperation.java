@@ -1,7 +1,7 @@
 /**
  * 
  */
-package simple.mind.dbplayer;
+package simple.mind.dbplayer.ctrl;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

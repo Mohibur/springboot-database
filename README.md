@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan({ 
-	"simple.mind.dbplayer", // package provides http://localhost:8080/database/ 
+	"simple.mind.dbplayer.ctrl", // package provides http://localhost:8080/database/ 
 	"com.example.demo"      // package of this project
 	})
 public class DemoApplication {

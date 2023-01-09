@@ -53,7 +53,7 @@ class Ajax {
 			headerMap[header] = value;
 		});
 
-		var contentType = z.nullToString(headerMap["content-type"]);
+		var contentType = $.nullToString(headerMap["content-type"]);
 		var body = this.#xmlhttp.responseText;
 		var bodyOriginal = body;
 		var postProcessMethod = Ajax.#SUCCESS_METHOD;
@@ -99,9 +99,7 @@ class Ajax {
 	}
 
 	#packHeaders() {
-		for (let key in this.#headers) {
-			this.#xmlhttp.setRequestHeader(key, this.#headers[key]);
-		}
+		$.each(this.#headers, (k, v) => this.#xmlhttp.setRequestHeader(k, v))
 	}
 
 	setPath(u) {

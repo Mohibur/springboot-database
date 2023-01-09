@@ -9,12 +9,12 @@
 	</tr>
 </tfoot>
 <script>
-z("#insertButton").click(function() {
-	let editor = z('#editor');
+$("#insertButton").click(function() {
+	let editor = $('#editor');
 	let cols = "";
 	let values = "";
 
-	z("#tableWindow").zz("tr").each(r => {
+	$("#tableWindow").$$("tr").each(r => {
 		let v = r.cell(0).html();
 		if(cols == "") {
 			cols += "    \`" + v + "\`\n";
@@ -28,17 +28,17 @@ z("#insertButton").click(function() {
 			values += "  , <" + v + ">\n";
 		}
 	})
-	z('#editor').val ("INSERT INTO " + z("#tableName").val() + "(\n" + cols + ")\nVALUES(\n" + values +");");
+	$('#editor').val ("INSERT INTO " + $("#tableName").val() + "(\n" + cols + ")\nVALUES(\n" + values +");");
 })
 
-	z("#deleteButton").click(function() {z('#editor').val('DROP TABLE ' +  z('#tableName').val() + ';')})
+	$("#deleteButton").click(function() {$('#editor').val('DROP TABLE ' +  $('#tableName').val() + ';')})
 
-	z("#truncateButton").click(function() {z('#editor').val('TRUNCATE TABLE ' +  z('#tableName').val() + ';');})
+	$("#truncateButton").click(function() {$('#editor').val('TRUNCATE TABLE ' +  $('#tableName').val() + ';');})
 
-	z("#selectQuery").click(function () {
+	$("#selectQuery").click(function () {
 	let cols = "";
 
-	z("#tableWindow").zz("tr").each(r => {
+	$("#tableWindow").$$("tr").each(r => {
 		let v = r.cell(0).html();
 		if(cols == "") {
 			cols += "    \`" + v + "\`\n";
@@ -46,6 +46,6 @@ z("#insertButton").click(function() {
 			cols += "  , \`" + v + "\`\n";
 		}
 	})
-	z('#editor').val ("SELECT \n" + cols + "FROM " + z("#tableName").val() + "\n;");
+	$('#editor').val ("SELECT \n" + cols + "FROM " + $("#tableName").val() + "\n;");
 })
 </script>

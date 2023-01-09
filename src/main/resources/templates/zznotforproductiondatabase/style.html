@@ -1,22 +1,31 @@
 <style>
+#tableNameList {
+	vertical-align: top;
+	min-width: 300px;
+}
+
 .divclass, .notabledivclass {
 	border-top: 1px solid black;
 	border-bottom: 1px solid black;
 	padding: 3px;
 	margin: 3px;
 	cursor: pointer;
-	max-width:300px;
-	width:300px;
+	max-width: 300px;
+	width: 300px;
 }
 
 .divclass:hover {
 	background: #afcfdf;
 }
 
-.editor {
+.editor, .history {
 	border: 2px solid #cfafdf;
 	height: 350px;
 	width: 400px;
+}
+
+.flattable {
+	border-collapse: collapse;
 }
 
 .table-def {
@@ -81,12 +90,14 @@
 .right-td {
 	text-align: left;
 }
+
 .buttonimage {
-	cursor:pointer;
+	cursor: pointer;
+	border: 1px solid white;
 }
+
 .buttonimage:hover {
--webkit-filter: invert(100%) !important; /* chrome, safari*/
-filter: invert(100%) !important; /* e.g. firefox*/
+	border: 1px solid gold;
 }
 
 .datatrhead td {
@@ -108,17 +119,40 @@ filter: invert(100%) !important; /* e.g. firefox*/
 
 .execution-time {
 	border-bottom: 1px solid black;
-	margin:5px;
+	margin: 5px;
 	font-size: xx-small;
-	font-style:italic;
-	color:black;
+	font-style: italic;
+	color: black;
 }
 
 .execution-time-another {
 	border-bottom: 1px solid gray;
-	margin:5px;
+	margin: 5px;
 	font-size: xx-small;
-	font-style:italic;
+	font-style: italic;
 	color: gray;
 }
+
+/*Create table section*/
+.create-table-header-class td {
+	border: 1px solid gold;
+	background: #589b9b;
+	padding: 3px;
+	font-size:small;
+}
+
+.create-table-body-class td {
+	border: 1px solid gold;
+	padding: 3px;
+	font-size:small;
+}
+
+.query-history {
+	padding: 3px;
+	border: 1px solid gold;
+	width: 98%;
+	background: white;
+	cursor: pointer;
+}
+
 </style>

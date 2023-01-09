@@ -1,0 +1,134 @@
+<span id="create-table" title="create table"> <img
+	class="buttonimage" height="16px"
+	src=" data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw1AUhU9bS4tUHCwo4hCwOlkQFXHUKhShQqgVWnUweekfNGlIUlwcBdeCgz+LVQcXZ10dXAVB8AfE1cVJ0UVKvC8ptIjxwuN9nHfP4b37AH+jwlSzaxxQNctIJxNCNrcqhF7hQxD9GEZYYqY+J4opeNbXPXVT3cV5lnffn9Wj5E0G+ATiWaYbFvEG8fSmpXPeJ46ykqQQnxOPGXRB4keuyy6/cS467OeZUSOTnieOEgvFDpY7mJUMlXiKOKaoGuX7sy4rnLc4q5Uaa92TvzCS11aWuU5rCEksYgkiBMiooYwKLMRp10gxkabzhId/0PGL5JLJVQYjxwKqUCE5fvA/+D1bszA54SZFEkDwxbY/RoDQLtCs2/b3sW03T4DAM3Cltf3VBjDzSXq9rcWOgN5t4OK6rcl7wOUOMPCkS4bkSAFa/kIBeD+jb8oBfbdA95o7t9Y5Th+ADM0qdQMcHAKjRcpe93h3uHNu//a05vcDJaRyiKln68MAAAAGYktHRAAAAAAAAPlDu38AAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfnAQUXKxMmjFFaAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAQdJREFUOMvF008rRFEYx/GPaRDKLO6tiT1lNyXZykZ5B96ItZX3MK/AzkaRQlYSI2lsLSUaUlJqjGPzTN0m/6ZZeDbne+4559dzv51DVJY0siRlybw+qmTAGsqSS1SRYxgttNOb7acxm7+cfy7H4anCxxw6t5YjMGEVe7G+gv3Y15Ql1SyZzpKrcLAycaxWWlMvhO4WeCfGeWyUH4fch8R2LLRelzz81UG5Cx8vtt5vGKm560tigadxgiZGMRucsIiz2LeAc1RwpCeg/gX/6GDge9AbkGLsFNg33PnKwSmuw8FMcIr/bhRav8AkDv7fQblnnkdyXuBOtNt9pZXguV4H41jvs4HDT7LtSltRutR2AAAAAElFTkSuQmCC" />
+</span>
+<div id="create-table-div">
+	<div>
+		Table name :<input id="tableName" name="tableName">
+	</div>
+	<table class="flattable">
+		<thead>
+			<tr class="create-table-header-class">
+				<td title="column name">Name</td>
+				<td title="column type">Type</td>
+				<td title="length">Len.</td>
+				<td title="default value">Def.</td>
+				<td title="is null">null</td>
+				<td title="is primary key">pri.</td>
+				<td title="is unique key">uni.</td>
+				<td title="auto increment">Inc</td>
+				<td title="delete"></td>
+			</tr>
+		</thead>
+		<tbody id="tbl-columns"></tbody>
+	</table>
+	<button id="add-row">Add Row</button>
+</div>
+<script>
+	let h2columns = {
+		INT : {
+			hasLength : false,
+			def : "null",
+			allowPri : true,
+			allowAuto : true,
+			allowUnique : true
+		},
+		VARCHAR : {
+			hasLength : true,
+			def : "null",
+			allowPri : false,
+			allowAuto : false,
+			allowUnique : true
+		},
+		BIGINT : {
+			hasLength : false,
+			def : "null",
+			allowPri : false,
+			allowAuto : false,
+			allowUnique : true
+		},
+		BLOB : {
+			hasLength : false,
+			def : "null",
+			allowPri : false,
+			allowAuto : false,
+			allowUnique : false
+		},
+		TEXT : {
+			hasLength : false,
+			def : "null",
+			allowPri : false,
+			allowAuto : false,
+			allowUnique : true
+		}
+	}
+
+	$("#add-row").click(function(dbcols) {
+		return function() {
+			addColumn(dbcols)
+		}
+	}(h2columns));
+
+	function addColumn(dbcols) {
+		let row = $("#tbl-columns").row().cls("create-table-body-class");
+		row.cell().mk("input").cls("columname").size(10);
+		let sel = row.cell().mk("select").cls("columntype");
+		sel.option("", "");
+		sel.data("dbcols", dbcols);
+		for (index in dbcols) {
+			sel.option(index, index);
+			sel.dbcols
+		}
+
+		sel.on("change", function(obj) {
+			return function() {
+				let row = obj.parent().parent();
+				if (obj.val() == "") {
+					row.$(".colmnlength").disabled();
+					return;
+				}
+				let t = obj.data("dbcols")[obj.val()];
+				if (t.hasLength == true) {
+					row.$(".colmnlength").enable();
+				} else {
+					row.$(".colmnlength").disable();
+				}
+			}
+		}(sel))
+		row.cell().mk("input").cls("colmnlength").disable().size(4);
+		row.cell().mk("input").cls("defaultval").size(4);
+		row.cell().mk("input").cls("null").type("checkbox");
+		row.cell().mk("input").cls("primary").type("checkbox").on("click", function() {
+			if(!$(this).checked()) return;
+			let parent = $(this).parent().parent();
+			let duplicate = false;
+			parent.parent().each("tr", v => {
+				if(parent.rowIndex() != v.rowIndex() && v.$(".primary").checked()) duplicate = true;
+			});
+			if(duplicate) {
+				$(this).check(true);
+				alert("one table can have only one primary key");
+			}
+		});
+		row.cell().mk("input").cls("unique").type("checkbox");
+		row.cell().mk("input").cls("autoinc").type("checkbox").on("click", function() {
+			if(!$(this).checked()) return;
+			if(!$(this).parent().parent().$(".primary").checked()) {
+				alert("To enable auto increment, primary key must have to be selected");
+				$(this).check(false);
+			}
+		});
+		row.cell().mk("img").src(deleteButton).css("cursor", "pointer").on("click", function() {
+			let row = $(this).parent().parent();
+			row.parent().rm(row);
+		});
+	}
+
+	let popup = new PopUpWindow("#create-table-div").caption("Create Table");
+
+	$("#create-table").click(function() {
+		$("#tbl-columns").html("");
+		addColumn(h2columns);
+		popup.show();
+	})
+</script>
