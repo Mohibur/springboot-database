@@ -78,8 +78,6 @@ class GeneralHTMLProcessor {
 		return rm(target);
 	}
 
-
-
 	rm(target) {
 		if (target instanceof GeneralHTMLProcessor) {
 			this.#html.removeChild(target.#html);
@@ -99,9 +97,21 @@ class GeneralHTMLProcessor {
 		return this.#html.disabled === true || this.#html.disabled == "true";
 	}
 
+	scrlLeft(v) {
+		if(typeof v == "undefined") return this.#html.scrollLeft;
+		this.#html.scrollLeft = v;
+		return this;
+	}
+	
+	scrlTop() {
+		if(typeof v == "undefined") return this.#html.scrollTop;
+		this.#html.scrollTop = v;
+		return this;
+	}
+
 	setDisable(status) {
 		let tagname = this.#html.tagName.toLowerCase();
-		if (COMMONINPUTS.contains(tagname))
+		if (GeneralHTMLProcessor.COMMONINPUTS.contains(tagname))
 			this.#html.disabled = status;
 		else {
 			this.each(GeneralHTMLProcessor.COMMONINPUTS.join(","), e => e.disabled = status);
@@ -110,11 +120,11 @@ class GeneralHTMLProcessor {
 	}
 
 	disable() {
-		return this.setDisabled(true);
+		return this.setDisable(true);
 	}
 
 	enable() {
-		return this.setDisabled(false);
+		return this.setDisable(false);
 	}
 
 	check(status) {
@@ -273,10 +283,12 @@ class GeneralHTMLProcessor {
 
 	hide() {
 		this.#html.style.display = "none";
+		return this;
 	}
 
 	show() {
-		return this.#html.style.display = GeneralHTMLProcessor.DISPLAY_STYLE[this.#html.tagName.toLowerCase()];
+		this.#html.style.display = GeneralHTMLProcessor.DISPLAY_STYLE[this.#html.tagName.toLowerCase()];
+		return this;
 	}
 
 	target(v) {
@@ -325,12 +337,23 @@ class GeneralHTMLProcessor {
 			return this.#html.cellIndex;
 		return undefined;
 	}
-
-	index() {
-		if (this.#html instanceof HTMLTableRowElement)
-			return this.#html.rowIndex;
-		if (this.#html instanceof HTMLTableCellElement)
-			return this.#html.cellIndex;
+	at(i) {
+		if (this.#html instanceof HTMLTableRowElement) {
+			return new GeneralHTMLProcessor(this.#html.cells[i]);
+		}
+		if (this.#html instanceof HTMLTableCaptionElement) {
+			return new GeneralHTMLProcessor(this.#html.rows[i]);
+		}
+	}
+	index(i) {
+		if (typeof i == "undefined") {
+			if (this.#html instanceof HTMLTableRowElement)
+				return this.#html.rowIndex;
+			if (this.#html instanceof HTMLTableCellElement)
+				return this.#html.cellIndex;
+		} else {
+			return this.at(i);
+		}
 		return undefined;
 	}
 

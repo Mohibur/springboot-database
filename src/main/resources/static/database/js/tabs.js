@@ -3,6 +3,7 @@ class TabWindow {
 	#tabwindow; // hold the tabs;
 	#processwindow; // window to hold the window 
 	#commonid;
+	#tabs = {};
 
 	constructor(selector) {
 		this.#commonid = $.makeid();
@@ -68,24 +69,21 @@ class TabWindow {
 		`, this.#commonid);
 	}
 
-	add(caption, selector, isactive, onclick) {
+	add(tabid, caption, selector, isactive, onclick) {
 		if (isactive == true || isactive === true) isactive = true;
 		else isactive = false;
-
-		let s = this.#tabwindow.mk("div").addCls(`tab-class-${this.#commonid}`).html(caption);
+		let s = this.#tabwindow.mk("div").addCls(`tab-class-${this.#commonid}`).html(caption).id(tabid);
 
 		this.#tabwindow.mk("div").addCls(`escape-class-${this.#commonid}`).html("&nbsp;");
 		let w = $(selector);
+		this.#tabs[tabid] = { t: s, w: w };
 		this.#processwindow.append(w);
 
-		s.on("click", function(w, obj, onclick) {
+		s.on("click", function(obj, tabid, onclick) {
 			return function() {
-				obj.clearSelection();
-				$(this).addCls(`tab-active-class-${obj.getCommonId()}`);
-				w.show();
-				if (typeof onclick == "function") onclick();
+				obj.goto(tabid, onclick);
 			}
-		}(w, this, onclick))
+		}(this, tabid, onclick))
 
 		if (isactive) {
 			this.clearSelection();
@@ -100,6 +98,14 @@ class TabWindow {
 	clearSelection() {
 		this.#processwindow.each(h => h.hide());
 		this.#tabwindow.each(`.tab-class-${this.#commonid}`, h => h.rmCls(`tab-active-class-${this.#commonid}`))
+	}
+
+	goto(id, onclick) {
+		let { t, w } = this.#tabs[id];
+		this.clearSelection();
+		t.addCls(`tab-active-class-${this.getCommonId()}`);
+		w.show();
+		if (typeof onclick == "function") onclick();
 	}
 
 }

@@ -120,4 +120,8 @@ class PopUpWindow {
 	hide() {
 		this.#blocker.hide();
 	}
+	
+	close() {
+		this.#blocker.hide();
+	}
 }

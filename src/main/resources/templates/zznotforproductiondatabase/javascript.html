@@ -1,9 +1,9 @@
 <script>
 	let deleteButton = " data:image/png;base64,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";
-	function assingClickToTableDiv() {
-		hideModifyColumn();
+	w.assingClickToTableDiv = function() {
+		w.hideModifyColumn();
 		let ajax = new Ajax();
-		let divs = $.$$(".divclass");
+		let divs = $$(".divclass");
 		divs.click(function() {
 			if ($(this).hasCls("notabledivclass"))
 				return;
@@ -12,15 +12,15 @@
 			ajax.url("[[${path.TABLE}]]/").data("tableName", this.innerHTML)
 					.onSuccess(function(tblName) {
 						return function(d) {
-							hideModifyColumn();
-							processTableInfo(d, tblName);
+							w.hideModifyColumn();
+							w.processTableInfo(d, tblName);
 							$("#executionResult").html("");
 						}
 					}($(this).html())).postJson();
 		});
 	}
 
-	function setExecutionTime(time) {
+	w.setExecutionTime = function(time) {
 		let cls = [ "execution-time" ];
 		if (!$("#executionTime").$("span").hasCls("execution-time-another"))
 			cls.push("execution-time-another");
@@ -28,27 +28,26 @@
 				"Execution time: " + time);
 	}
 
-	function processTableInfo(data, tblName) {
-		setExecutionTime(data.time);
+	w.processTableInfo = function(data, tblName) {
+		w.setExecutionTime(data.time);
 		$("#cption").html(tblName);
 		let tableWindow = $("#tableWindow").html("");
 		$("#tableName").val(tblName);
-		$("#editor").val("SELECT * FROM " + tblName + ";");
+		w.textEditor.text("SELECT * FROM " + tblName + ";");
 		$("#table-footer").show();
 		for (let i = 1; i < data.result.length; i++) {
 			let e = data.result[i];
 			var row = tableWindow.row();
 			row.cell().html(e[0]).addCls("column");
-			row.cell().html(e[1].replace("CHARACTER VARYING", "VARCHAR"))
-					.addCls("other");
+			row.cell().html(e[1].replace("CHARACTER VARYING", "VARCHAR")).addCls("other");
 			row.cell().html(e[2]).addCls("other");
 			row.cell().html(e[3]).addCls("other");
 			row.cell().html(e[4]).addCls("other");
-			row.click(populateColumnEditor);
+			row.click(w.populateColumnEditor);
 		}
 	}
 
-	function populateColumnEditor() {
+	w.populateColumnEditor = function() {
 		let f = $("form[name=modify-column]");
 		f.form("columnName").val($(this).cell(0).html());
 		f.form("columnType").val($(this).cell(1).html());
@@ -58,16 +57,16 @@
 		$('#modify-column-table').show();
 	}
 
-	function resetTableDetail() {
+	w.resetTableDetail = function() {
 		$("#tableWindow").html("");
 		$("#cption").html("Select a table from the left");
 		$("#table-footer").hide();
 	}
 
-	function hideModifyColumn() {
+	w.hideModifyColumn = function() {
 		$("#modify-column-table").hide();
 	}
 
 	// CALL
-	assingClickToTableDiv();
+	w.assingClickToTableDiv();
 </script>

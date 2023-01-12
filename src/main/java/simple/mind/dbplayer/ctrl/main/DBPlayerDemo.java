@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @SpringBootApplication
 @ComponentScan("simple.mind.dbplayer")
 @Controller
-public class DemoApplication {
-  
+public class DBPlayerDemo {
+
   public static void main(String[] args) {
-    SpringApplication.run(DemoApplication.class, args);
+    SpringApplication.run(DBPlayerDemo.class, args);
   }
-  
-  @GetMapping("/") 
+
+  @GetMapping("/")
   public String i() {
     return "testindex";
   }

@@ -1,86 +1,97 @@
-<span id="create-table" title="create table"> <img
+<span id="create-table-button" title="create table"> <img
 	class="buttonimage" height="16px"
 	src=" data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw1AUhU9bS4tUHCwo4hCwOlkQFXHUKhShQqgVWnUweekfNGlIUlwcBdeCgz+LVQcXZ10dXAVB8AfE1cVJ0UVKvC8ptIjxwuN9nHfP4b37AH+jwlSzaxxQNctIJxNCNrcqhF7hQxD9GEZYYqY+J4opeNbXPXVT3cV5lnffn9Wj5E0G+ATiWaYbFvEG8fSmpXPeJ46ykqQQnxOPGXRB4keuyy6/cS467OeZUSOTnieOEgvFDpY7mJUMlXiKOKaoGuX7sy4rnLc4q5Uaa92TvzCS11aWuU5rCEksYgkiBMiooYwKLMRp10gxkabzhId/0PGL5JLJVQYjxwKqUCE5fvA/+D1bszA54SZFEkDwxbY/RoDQLtCs2/b3sW03T4DAM3Cltf3VBjDzSXq9rcWOgN5t4OK6rcl7wOUOMPCkS4bkSAFa/kIBeD+jb8oBfbdA95o7t9Y5Th+ADM0qdQMcHAKjRcpe93h3uHNu//a05vcDJaRyiKln68MAAAAGYktHRAAAAAAAAPlDu38AAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfnAQUXKxMmjFFaAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAQdJREFUOMvF008rRFEYx/GPaRDKLO6tiT1lNyXZykZ5B96ItZX3MK/AzkaRQlYSI2lsLSUaUlJqjGPzTN0m/6ZZeDbne+4559dzv51DVJY0siRlybw+qmTAGsqSS1SRYxgttNOb7acxm7+cfy7H4anCxxw6t5YjMGEVe7G+gv3Y15Ql1SyZzpKrcLAycaxWWlMvhO4WeCfGeWyUH4fch8R2LLRelzz81UG5Cx8vtt5vGKm560tigadxgiZGMRucsIiz2LeAc1RwpCeg/gX/6GDge9AbkGLsFNg33PnKwSmuw8FMcIr/bhRav8AkDv7fQblnnkdyXuBOtNt9pZXguV4H41jvs4HDT7LtSltRutR2AAAAAElFTkSuQmCC" />
 </span>
 <div id="create-table-div">
-	<div>
-		Table name :<input id="tableName" name="tableName">
+	<div style="padding: 3px;">
+		Table name <input id="createTableName" name="tableName">
+		<button id="createTable">Create</button>
+		<button id="add-row">Add Row</button>
 	</div>
-	<table class="flattable">
-		<thead>
-			<tr class="create-table-header-class">
-				<td title="column name">Name</td>
-				<td title="column type">Type</td>
-				<td title="length">Len.</td>
-				<td title="default value">Def.</td>
-				<td title="is null">null</td>
-				<td title="is primary key">pri.</td>
-				<td title="is unique key">uni.</td>
-				<td title="auto increment">Inc</td>
-				<td title="delete"></td>
-			</tr>
-		</thead>
-		<tbody id="tbl-columns"></tbody>
-	</table>
-	<button id="add-row">Add Row</button>
+	<div style="max-height: 400px; overflow: auto">
+		<table class="flattable">
+			<thead>
+				<tr class="create-table-header-class">
+					<td title="column name">Name</td>
+					<td title="column type">Type</td>
+					<td title="default value">Def.</td>
+					<td title="is null">null</td>
+					<td title="is primary key">pri.</td>
+					<td title="is unique key">uni.</td>
+					<td title="auto increment">Inc</td>
+					<td title="delete"></td>
+				</tr>
+			</thead>
+			<tbody id="new-tbl-columns"></tbody>
+		</table>
+	</div>
 </div>
 <script>
-	let h2columns = {
+	w.popup = new PopUpWindow("#create-table-div").caption("Create Table");
+	w.h2columns = {
 		INT : {
-			hasLength : false,
+			hasCustVal : false,
 			def : "null",
 			allowPri : true,
 			allowAuto : true,
 			allowUnique : true
 		},
 		VARCHAR : {
-			hasLength : true,
+			hasCustVal : true,
 			def : "null",
 			allowPri : false,
 			allowAuto : false,
 			allowUnique : true
 		},
 		BIGINT : {
-			hasLength : false,
+			hasCustVal : false,
 			def : "null",
 			allowPri : false,
 			allowAuto : false,
 			allowUnique : true
 		},
 		BLOB : {
-			hasLength : false,
+			hasCustVal : false,
 			def : "null",
 			allowPri : false,
 			allowAuto : false,
 			allowUnique : false
 		},
 		TEXT : {
-			hasLength : false,
+			hasCustVal : false,
 			def : "null",
 			allowPri : false,
 			allowAuto : false,
 			allowUnique : true
+		},
+		ENUM : {
+			hasCustVal : true,
+			def : "null",
+			allowPri : false,
+			allowAuto : false,
+			allowUnique : false
 		}
 	}
 
 	$("#add-row").click(function(dbcols) {
 		return function() {
-			addColumn(dbcols)
+			w.addColumn(dbcols)
 		}
-	}(h2columns));
+	}(w.h2columns));
 
-	function addColumn(dbcols) {
-		let row = $("#tbl-columns").row().cls("create-table-body-class");
-		row.cell().mk("input").cls("columname").size(10);
-		let sel = row.cell().mk("select").cls("columntype");
+	w.addColumn = function(dbcols) {
+		let row = $("#new-tbl-columns").row().cls("create-table-body-class");
+		row.cell().css("width", "130px").mk("input").cls("columname").size(10);
+		let selcell = row.cell().css("width", "113px");
+		let sel = selcell.mk("select").cls("columntype");
+		let leninput = selcell.mk("input").size(4).cls("coldeflen").hide();
 		sel.option("", "");
 		sel.data("dbcols", dbcols);
 		for (index in dbcols) {
 			sel.option(index, index);
-			sel.dbcols
+			//sel.dbcols
 		}
-
-		sel.on("change", function(obj) {
+		sel.on("change", function(obj, leninput) {
 			return function() {
 				let row = obj.parent().parent();
 				if (obj.val() == "") {
@@ -88,15 +99,30 @@
 					return;
 				}
 				let t = obj.data("dbcols")[obj.val()];
-				if (t.hasLength == true) {
-					row.$(".colmnlength").enable();
+				if (t.hasCustVal == true) {
+					leninput.show();
 				} else {
-					row.$(".colmnlength").disable();
+					leninput.val("");
+					leninput.hide();
 				}
 			}
-		}(sel))
-		row.cell().mk("input").cls("colmnlength").disable().size(4);
-		row.cell().mk("input").cls("defaultval").size(4);
+		}(sel, leninput))
+		let celldef = row.cell().css("width", "113px");
+		let seldef = celldef.mk("select").cls("defaultval");
+		seldef.option("NULL", "NULL");
+		seldef.option("EMPTY", "EMPTY");
+		seldef.option("VALUE", "VALUE");
+		let definp = celldef.mk("input").hide().size(3);
+		seldef.on("change", function(celldef) {
+			return function() {
+				if(seldef.val() == "VALUE") {
+					definp.show();
+				} else {
+					definp.hide();
+				}
+			}
+		}(celldef))
+
 		row.cell().mk("input").cls("null").type("checkbox");
 		row.cell().mk("input").cls("primary").type("checkbox").on("click", function() {
 			if(!$(this).checked()) return;
@@ -118,17 +144,104 @@
 				$(this).check(false);
 			}
 		});
+
 		row.cell().mk("img").src(deleteButton).css("cursor", "pointer").on("click", function() {
 			let row = $(this).parent().parent();
+			if(row.index() == 1) return;
 			row.parent().rm(row);
 		});
 	}
 
-	let popup = new PopUpWindow("#create-table-div").caption("Create Table");
+	$("#create-table-button").click(function() {
+		$("#new-tbl-columns").html("");
+		w.addColumn(w.h2columns);
+		w.popup.show();
+	})
 
-	$("#create-table").click(function() {
-		$("#tbl-columns").html("");
-		addColumn(h2columns);
-		popup.show();
+	w.validateAndProcessColName = function(h) {
+		let colName = h.index(0).$("input");
+		let def = "";
+		if(colName.val().trim() == "") {
+			colName.css("background", "yellow");
+			return { failed: true, text: "" };
+		} else {
+			colName.css("background", "white");
+			return { failed: false, text: "`" + colName.val().trim() + "`" };
+		}
+	}
+
+	// right now only caring for integer, enum or double is not considered
+	w.validateAndProcessLength = function(h) {
+		let definp = h.at(1).$("input");
+		let sel = h.at(1).$("select")
+		let colType = sel.val();
+		let dbcols = sel.data("dbcols");
+		let length = definp.val().trim();
+		if(dbcols[colType].hasCustVal && length == "") {
+			definp.css("background", "yellow");
+			return { failed: true, text: ""};
+		} else if(!dbcols[colType].hasCustVal) {
+			definp.css("background", "white");
+			return {failed: false, text: ""};
+		}
+
+		definp.css("background", "white");
+		return {failed: false, text: "(" + definp.val().trim() +")"}
+	}
+
+	w.validateAndProcessColeType = function(h) {
+		let colType = h.at(1).$("select");
+		if(colType.val().trim() == "") {
+			colType.css("background", "yellow");
+			return { failed: true, text: "" };
+		} else {
+			colType.css("background", "white");
+			let r = w.validateAndProcessLength(h);
+			if(r.failed) return r;
+			return { failed: false, text: colType.val().trim() + r.text };
+		}
+	}
+
+	w.validateAndProcessDefaultValue = function(h) {
+		
+	}
+
+	$("#createTable").click(function() {
+		if($("#createTableName").val().trim() == "") {
+			alert("Table name cannot be empty");
+			return;
+		}
+		let query = "CREATE TABLE " + $("#createTableName").val() + "(\n"
+		let failed = false;
+		let cols = [];
+		$("#new-tbl-columns").each(h => {
+			let colDef;
+			let r = w.validateAndProcessColName(h);
+			if(r.failed) {
+				failed = true;
+			} else {
+				colDef = r.text;
+			}
+
+			r = w.validateAndProcessColeType(h);
+			if(r.failed) {
+				failed = true;
+			} else {
+				colDef = colDef + " " + r.text;
+			}
+
+			r = w.validateAndProcessDefaultValue(h);
+
+			if(!failed) cols.push(colDef);
+		})
+		
+		if(failed){
+			alert("confirm the highlighted issues");
+		} else if(cols.length>0)  {
+			console.log(cols);
+			query += cols.join(",\n") + "\n)\n;";
+			w.textEditor.text(query);
+			w.popup.close();
+		}
 	})
 </script>

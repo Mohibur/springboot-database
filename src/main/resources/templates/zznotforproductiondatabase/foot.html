@@ -10,7 +10,6 @@
 </tfoot>
 <script>
 $("#insertButton").click(function() {
-	let editor = $('#editor');
 	let cols = "";
 	let values = "";
 
@@ -28,12 +27,16 @@ $("#insertButton").click(function() {
 			values += "  , <" + v + ">\n";
 		}
 	})
-	$('#editor').val ("INSERT INTO " + $("#tableName").val() + "(\n" + cols + ")\nVALUES(\n" + values +");");
+	w.textEditor.text("INSERT INTO " + $("#tableName").val() + "(\n" + cols + ")\nVALUES(\n" + values +");");
 })
 
-	$("#deleteButton").click(function() {$('#editor').val('DROP TABLE ' +  $('#tableName').val() + ';')})
+	$("#deleteButton").click(function() {
+		w.textEditor.text('DROP TABLE ' +  $('#tableName').val() + ';')
+	})
 
-	$("#truncateButton").click(function() {$('#editor').val('TRUNCATE TABLE ' +  $('#tableName').val() + ';');})
+	$("#truncateButton").click(function() {
+		w.textEditor.text('TRUNCATE TABLE ' +  $('#tableName').val() + ';');
+	})
 
 	$("#selectQuery").click(function () {
 	let cols = "";
@@ -46,6 +49,6 @@ $("#insertButton").click(function() {
 			cols += "  , \`" + v + "\`\n";
 		}
 	})
-	$('#editor').val ("SELECT \n" + cols + "FROM " + $("#tableName").val() + "\n;");
+	w.textEditor.text("SELECT \n" + cols + "FROM " + $("#tableName").val() + "\n;");
 })
 </script>
