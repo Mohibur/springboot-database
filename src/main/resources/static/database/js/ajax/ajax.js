@@ -23,7 +23,7 @@ class Ajax {
 
 	#responseAction = {};
 	#method = Methods.GET;
-	#headers = [];
+	#headers = {};
 	constructor() {
 		this.#xmlhttp = new XMLHttpRequest();
 		this.#xmlhttp.onreadystatechange = function(ob) {
@@ -99,7 +99,10 @@ class Ajax {
 	}
 
 	#packHeaders() {
-		$.each(this.#headers, (k, v) => this.#xmlhttp.setRequestHeader(k, v))
+		$.each(this.#headers, (k, v) => {
+			console.log(k, v);
+			this.#xmlhttp.setRequestHeader(k, v)
+		})
 	}
 
 	setPath(u) {
@@ -177,6 +180,12 @@ class Ajax {
 	}
 
 	addData(name, value) {
+		if (typeof name != "string" && name instanceof GeneralHTMLProcessor) {
+			let n = name.name() == null || name.name() == "" ? name.id() : name.name()
+			this.#allData[n] = name.val();
+			return this;
+		}
+
 		if (typeof this.#allData != "object") {
 			throw "data type does not match"
 		}
@@ -271,12 +280,16 @@ class Ajax {
 	}
 
 
-	onSuccess(fnc) {
+	success(fnc) {
 		if (typeof fnc != "function") {
 			throw "have to be a funciton";
 		}
 		this.#responseAction[Ajax.#SUCCESS_METHOD] = fnc;
 		return this;
+	}
+
+	onSuccess(fnc) {
+		return this.success(fnc);
 	}
 
 	onError = function(fnc) {

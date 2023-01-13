@@ -8,7 +8,7 @@
 		query = query.trim().toLowerCase().replaceAll('\n', ' ').replaceAll('\t', ' ');
 		if(!new RegExp(/^select /).test(query)) return "";
 		let arr = [...query.matchAll("from +[a-z(_0-9]+")];
-		if(arr.length > 1) return "";
+		if(arr.length != 1) return "";
 		let r = arr[0][0].split(" ");
 		return r[r.length - 1].toUpperCase();
 	}

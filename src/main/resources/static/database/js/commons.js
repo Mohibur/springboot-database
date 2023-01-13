@@ -98,13 +98,13 @@ class GeneralHTMLProcessor {
 	}
 
 	scrlLeft(v) {
-		if(typeof v == "undefined") return this.#html.scrollLeft;
+		if (typeof v == "undefined") return this.#html.scrollLeft;
 		this.#html.scrollLeft = v;
 		return this;
 	}
-	
+
 	scrlTop() {
-		if(typeof v == "undefined") return this.#html.scrollTop;
+		if (typeof v == "undefined") return this.#html.scrollTop;
 		this.#html.scrollTop = v;
 		return this;
 	}
@@ -311,6 +311,7 @@ class GeneralHTMLProcessor {
 		this.#html.method = v;
 		return this;
 	}
+
 	submit() {
 		this.#html.submit();
 	}
@@ -432,7 +433,7 @@ class GeneralHTMLProcessor {
 	len() {
 		if (this.#html instanceof HTMLTableRowElement) {
 			return this.#html.cells.length;
-		} else if (this.#html instanceof HTMLTableElement) {
+		} else if (this.#html instanceof HTMLTableElement || this.#html instanceof HTMLTableSectionElement) {
 			return this.#html.rows.length;
 		} else NaN;
 	}

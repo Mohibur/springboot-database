@@ -13,6 +13,8 @@
 <script src="/database/js/popup.js"></script>
 <script src="/database/js/tabs.js"></script>
 <script src="/database/js/simpletexteditor.js"></script>
+<script src="/database/js/formsubmit.js"></script>
+
 </head>
 <body>
 	<table>
@@ -39,16 +41,13 @@
 						</tr>
 					</thead>
 					<tbody id="tableWindow"></tbody>
-					<th:block th:insert="~{zznotforproductiondatabase/foot}"></th:block>
+					<th:block th:insert="~{zznotforproductiondatabase/table-operations}"></th:block>
 				</table> <th:block th:insert="~{zznotforproductiondatabase/form}"></th:block>
 			</td>
 		</tr>
 		<tr>
 			<td colspan=2 style="vertical-align: top">
 				<div>
-					<div id="executionTime">
-						<span></span>
-					</div>
 					<div id="executionResult"></div>
 				</div>
 			</td>
@@ -59,22 +58,25 @@
 		</thead>
 		<tbody></tbody>
 	</table>
-	<th:block th:insert="~{zznotforproductiondatabase/javascript}"></th:block>
 	<div id="edtorWindow">
 		<div style="width: 100%; padding: 5px 5px">
 			<th:block th:insert="~{zznotforproductiondatabase/img.execute.html}"></th:block>
 			<th:block
 				th:insert="~{zznotforproductiondatabase/img.createtable.html}"></th:block>
+			<span id="executionTime"></span>
 		</div>
+
 		<div id="textEditor"></div>
 	</div>
 	<div class="history" id="history"></div>
+	<div id="javaCodeWindow"></div>
 	<script>
-	w.tabWindow =	new TabWindow("#main-tab-window").add("tab-editorWindow", "Editor",
-				"#edtorWindow", true).add("tab-history", "History", "#history",
-				false);
-	w.textEditor = new SimpleTextEditor("#textEditor");
+		w.tabWindow = new TabWindow("#main-tab-window").add("tab-editorWindow",
+				"Editor", "#edtorWindow", true).add("tab-history", "History",
+				"#history", false);
+		w.textEditor = new SimpleTextEditor("#textEditor");
 	</script>
+	<th:block th:insert="~{zznotforproductiondatabase/javascript}"></th:block>
 	<th:block th:insert="~{zznotforproductiondatabase/test}"></th:block>
 </body>
 </html>

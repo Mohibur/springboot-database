@@ -39,7 +39,11 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
-		<!-- Remove from below -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>31.1-jre</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -78,6 +82,11 @@
 				<dependency>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-devtools</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>simple.mind</groupId>
+					<artifactId>java-template</artifactId>
+					<version>0.0.1</version>
 				</dependency>
 			</dependencies>
 		</profile>

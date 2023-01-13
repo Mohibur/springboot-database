@@ -22,10 +22,9 @@
 
 	w.setExecutionTime = function(time) {
 		let cls = [ "execution-time" ];
-		if (!$("#executionTime").$("span").hasCls("execution-time-another"))
+		if (!$("#executionTime").hasCls("execution-time-another"))
 			cls.push("execution-time-another");
-		$("#executionTime").html("").child("span").cls(cls).html(
-				"Execution time: " + time);
+		$("#executionTime").cls(cls).html("Execution time: " + time);
 	}
 
 	w.processTableInfo = function(data, tblName) {
@@ -69,4 +68,8 @@
 
 	// CALL
 	w.assingClickToTableDiv();
+
+	w.javaCodeEditor = new SimpleTextEditor("#javaCodeWindow").setWidth(400);
+	w.javaCodeWindow = new PopUpWindow("#javaCodeWindow"); // intentional
+
 </script>

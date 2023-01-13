@@ -95,7 +95,8 @@
 			return function() {
 				let row = obj.parent().parent();
 				if (obj.val() == "") {
-					row.$(".colmnlength").disabled();
+					leninput.val("");
+					leninput.hide();
 					return;
 				}
 				let t = obj.data("dbcols")[obj.val()];
@@ -147,7 +148,7 @@
 
 		row.cell().mk("img").src(deleteButton).css("cursor", "pointer").on("click", function() {
 			let row = $(this).parent().parent();
-			if(row.index() == 1) return;
+			if(row.parent().len() == 1) return;
 			row.parent().rm(row);
 		});
 	}
@@ -163,7 +164,7 @@
 		let def = "";
 		if(colName.val().trim() == "") {
 			colName.css("background", "yellow");
-			return { failed: true, text: "" };
+			return { failed: true, text: "Column Name cannot be empty" };
 		} else {
 			colName.css("background", "white");
 			return { failed: false, text: "`" + colName.val().trim() + "`" };
@@ -179,10 +180,10 @@
 		let length = definp.val().trim();
 		if(dbcols[colType].hasCustVal && length == "") {
 			definp.css("background", "yellow");
-			return { failed: true, text: ""};
+			return { failed: true, text: "Must have to input definition or length"};
 		} else if(!dbcols[colType].hasCustVal) {
 			definp.css("background", "white");
-			return {failed: false, text: ""};
+			return {failed: false, text: "(" + definp.val() + ")"};
 		}
 
 		definp.css("background", "white");
@@ -193,7 +194,7 @@
 		let colType = h.at(1).$("select");
 		if(colType.val().trim() == "") {
 			colType.css("background", "yellow");
-			return { failed: true, text: "" };
+			return { failed: true, text: "Must have to select a column type" };
 		} else {
 			colType.css("background", "white");
 			let r = w.validateAndProcessLength(h);
@@ -203,7 +204,17 @@
 	}
 
 	w.validateAndProcessDefaultValue = function(h) {
-		
+		let defType = h.at(2).$("select");
+		let defValue = h.at(2).$("input")
+		if(defType.val().trim() == "NULL") {
+			return { failed: false, text: "NULL" };
+		} else if(defType.val().trim() == "EMPTY") {
+			return { failed: false, text: "''" };
+		}
+		if(defValue.val().trim() == '') {
+			return { failed: true, text: "Default value should not be empty" };
+		}
+		return { failed: false, text: "DEFAULT " + defValue.val() };
 	}
 
 	$("#createTable").click(function() {
@@ -211,6 +222,7 @@
 			alert("Table name cannot be empty");
 			return;
 		}
+		let failedMessage = "";
 		let query = "CREATE TABLE " + $("#createTableName").val() + "(\n"
 		let failed = false;
 		let cols = [];
@@ -219,6 +231,7 @@
 			let r = w.validateAndProcessColName(h);
 			if(r.failed) {
 				failed = true;
+				failedMessage += r.text + "\n";
 			} else {
 				colDef = r.text;
 			}
@@ -226,17 +239,24 @@
 			r = w.validateAndProcessColeType(h);
 			if(r.failed) {
 				failed = true;
+				failedMessage += r.text + "\n";
 			} else {
 				colDef = colDef + " " + r.text;
 			}
 
 			r = w.validateAndProcessDefaultValue(h);
+			if(r.failed) {
+				failed = true;
+				failedMessage += r.text + "\n";
+			} else {
+				colDef = colDef + " " + r.text;
+			}
 
 			if(!failed) cols.push(colDef);
 		})
-		
+
 		if(failed){
-			alert("confirm the highlighted issues");
+			alert(failedMessage);
 		} else if(cols.length>0)  {
 			console.log(cols);
 			query += cols.join(",\n") + "\n)\n;";

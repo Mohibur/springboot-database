@@ -19,9 +19,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Strings;
+
 import lombok.extern.log4j.Log4j2;
+import simple.mind.template.TemplateProcessor;
 
 /**
  * @author Mohibur Rashid
@@ -35,6 +40,7 @@ public class OnlyController {
   public static final String EXECUTE = BASE + "/execute";
   public static final String TABLE_LIST = BASE + "/table-list";
   public static final String SELECT_QUERY = BASE + "/select-query";
+  public static final String JAVA_CLASS = BASE + "/java_class";
 
   private DatabaseOperation db;
 
@@ -97,5 +103,20 @@ public class OnlyController {
       v.setResult(l);
       return v;
     }
+  }
+
+  @PostMapping(value = { JAVA_CLASS, JAVA_CLASS + "/" }, // 
+      produces = MediaType.APPLICATION_JSON_VALUE //, //
+      //consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE
+      )
+  @ResponseBody
+  public ResultGeneric<String> getJavaClass(@RequestParam String tableName) {
+    TemplateProcessor templateProcessor = new TemplateProcessor(OnlyController.class,
+        "java-template/TableClassDefinition");
+    templateProcessor.setValue("PACKAGE_NAME", "write the correct package name;");
+    templateProcessor.setValue("TABLE_NAME", tableName);
+    templateProcessor.setValue("CLASS_NAME",
+        CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, Strings.nullToEmpty(tableName).toLowerCase()));
+    return ResultGeneric.success(templateProcessor.toString());
   }
 }
