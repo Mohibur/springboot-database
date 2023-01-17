@@ -1,0 +1,105 @@
+<table class="table-def">
+	<caption id="cption">Select a table from the left</caption>
+	<thead>
+		<tr class="title">
+			<td style="width: 200px;">FIELD</td>
+			<td style="width: 105px;">TYPE</td>
+			<td style="width: 55px;">NULL</td>
+			<td style="width: 105px;">KEY</td>
+			<td style="width: 180px;">DEFAULT</td>
+			<td style="width: 200px;">EXTRA</td>
+		</tr>
+	</thead>
+	<tbody id="tableWindow"></tbody>
+	<tfoot id="table-footer" style="display: none">
+		<tr>
+			<td colspan=5 style="text-align: center"><input type="hidden"
+				id="tableName" />
+				<button id="javaCode">Java Code</button>
+				<button id="selectQuery">Select</button>
+				<button id="insertButton">Insert</button>
+				<button id="deleteButton">Drop Table</button>
+				<button id="truncateButton">Truncate Table</button></td>
+		</tr>
+	</tfoot>
+</table>
+<script>
+$("#insertButton").click(function() {
+	let cols = "";
+	let values = "";
+
+	$("#tableWindow").$$("tr").each(r => {
+		let v = r.cell(0).html();
+		if(cols == "") {
+			cols += "    \`" + v + "\`\n";
+		} else {
+			cols += "  , \`" + v + "\`\n";
+		}
+
+		if(values == "") {
+			values += "    <" + v + ">\n";
+		} else {
+			values += "  , <" + v + ">\n";
+		}
+	})
+	w.textEditor.text("INSERT INTO " + $("#tableName").val() + "(\n" + cols + ")\nVALUES(\n" + values +");");
+})
+
+	$("#deleteButton").click(function() {
+		w.textEditor.text('DROP TABLE ' +  $('#tableName').val() + ';')
+	})
+
+	$("#truncateButton").click(function() {
+		w.textEditor.text('TRUNCATE TABLE ' +  $('#tableName').val() + ';');
+	})
+
+	$("#selectQuery").click(function () {
+	let cols = "";
+
+	$("#tableWindow").$$("tr").each(r => {
+		let v = r.cell(0).html();
+		if(cols == "") {
+			cols += "    \`" + v + "\`\n";
+		} else {
+			cols += "  , \`" + v + "\`\n";
+		}
+	})
+	w.textEditor.text("SELECT \n" + cols + "FROM " + $("#tableName").val() + "\n;");
+})
+
+
+$("#javaCode").on("click", function () {
+	new Ajax()
+		.path("[[${path.JAVA_CLASS}]]/")
+		.addData($("#tableName"))
+		.success((data) => {
+			if(data.status == true) {
+				//$("#javaCodeWindow").html(data.result);
+				w.javaCodeEditor.val(data.result);
+				w.javaCodeWindow.show($("#tableName").val());
+			} else {
+				alert("What!?");
+			}
+		}).post();
+})
+
+w.processTableInfo = function(data, tblName) {
+		w.setExecutionTime(data.time);
+		$("#cption").html(tblName);
+		let tableWindow = $("#tableWindow").html("");
+		$("#tableName").val(tblName);
+		w.textEditor.text("SELECT * FROM " + tblName + ";");
+		$("#table-footer").show();
+		for (let i = 1; i < data.result.length; i++) {
+			let e = data.result[i];
+			var row = tableWindow.row();
+			row.cell().html(e[0]).addCls("column");
+			row.cell().html(e[1].replace("CHARACTER VARYING", "VARCHAR")).addCls("other");
+			row.cell().html(e[2]).addCls("other");
+			row.cell().html(e[3]).addCls("other");
+			row.cell().html(e[4]).addCls("other");
+			row.cell().html($.nullToString(e[5])).addCls("other");
+			row.click(w.populateColumnEditor);
+		}
+	}
+</script>

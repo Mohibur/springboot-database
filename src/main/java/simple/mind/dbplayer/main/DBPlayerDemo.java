@@ -1,4 +1,4 @@
-package simple.mind.dbplayer.ctrl.main;
+package simple.mind.dbplayer.main;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

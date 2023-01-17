@@ -100,7 +100,6 @@ class Ajax {
 
 	#packHeaders() {
 		$.each(this.#headers, (k, v) => {
-			console.log(k, v);
 			this.#xmlhttp.setRequestHeader(k, v)
 		})
 	}

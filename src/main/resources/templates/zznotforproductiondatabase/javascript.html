@@ -27,25 +27,6 @@
 		$("#executionTime").cls(cls).html("Execution time: " + time);
 	}
 
-	w.processTableInfo = function(data, tblName) {
-		w.setExecutionTime(data.time);
-		$("#cption").html(tblName);
-		let tableWindow = $("#tableWindow").html("");
-		$("#tableName").val(tblName);
-		w.textEditor.text("SELECT * FROM " + tblName + ";");
-		$("#table-footer").show();
-		for (let i = 1; i < data.result.length; i++) {
-			let e = data.result[i];
-			var row = tableWindow.row();
-			row.cell().html(e[0]).addCls("column");
-			row.cell().html(e[1].replace("CHARACTER VARYING", "VARCHAR")).addCls("other");
-			row.cell().html(e[2]).addCls("other");
-			row.cell().html(e[3]).addCls("other");
-			row.cell().html(e[4]).addCls("other");
-			row.click(w.populateColumnEditor);
-		}
-	}
-
 	w.populateColumnEditor = function() {
 		let f = $("form[name=modify-column]");
 		f.form("columnName").val($(this).cell(0).html());

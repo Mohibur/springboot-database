@@ -96,6 +96,12 @@ class GeneralHTMLProcessor {
 	isDisabled() {
 		return this.#html.disabled === true || this.#html.disabled == "true";
 	}
+	
+	editable(v) {
+		if (typeof v == "undefined") return this.#html.contentEditable;
+		this.#html.contentEditable = v;
+		return this;
+	}
 
 	scrlLeft(v) {
 		if (typeof v == "undefined") return this.#html.scrollLeft;
@@ -158,6 +164,7 @@ class GeneralHTMLProcessor {
 		return new GeneralHTMLProcessor(this.#html[v]);
 	}
 
+	// event
 	on(e, f) {
 		if (typeof e != "string" || typeof f != "function") {
 			throw "Unexpected input paramters. Expected: e('string', function(){})";
@@ -165,6 +172,13 @@ class GeneralHTMLProcessor {
 		this.#html.addEventListener(e, f);
 	}
 
+	click(f) {
+		if (typeof f != "function") throw "value have to be a function";
+		this.#html.onclick = f;
+		return this;
+	}
+
+	// event
 	text(v) {
 		if (typeof v == "undefined") return this.#html.innerText;
 		this.#html.innerText = v;
@@ -193,12 +207,6 @@ class GeneralHTMLProcessor {
 	attr(a, v) {
 		if (typeof v == "undefined") return this.#html.getAttribute(a);
 		this.#html.setAttribute(a, v);
-		return this;
-	}
-
-	click(f) {
-		if (typeof f != "function") throw "value have to be a function";
-		this.#html.onclick = f;
 		return this;
 	}
 
@@ -660,8 +668,7 @@ $.isTrue = function(v) {
 	if (v == null || typeof v == "undefined") {
 		v = "";
 	}
-
-	if ((v !== 0 && v !== "0") || v === "true" || v === true) return true;
+	if ((v !== 0 && v !== "0" && v !== "false") || v.toLowerCase() === "true" || v === true) return true;
 	return false;
 }
 
@@ -674,7 +681,7 @@ $.isFalse = function(v) {
 		v = "";
 	}
 
-	if (v === 0 || v === "0" || v.toLower() === "false" || v === false) return true;
+	if (v === 0 || v === "0" || v.toLowerCase() === "false" || v === false) return true;
 	return false;
 }
 
@@ -693,6 +700,42 @@ $.each = function(obj, f) {
 	}
 }
 
+$.ua = function() {
+	// Opera 8.0+
+	var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+
+	// Firefox 1.0+
+	var isFirefox = typeof InstallTrigger !== 'undefined';
+
+	// Safari 3.0+ "[object HTMLElementConstructor]" 
+	var isSafari = /constructor/i.test(window.HTMLElement) || (function(p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification));
+
+	// Internet Explorer 6-11
+	var isIE = /*@cc_on!@*/false || !!document.documentMode;
+
+	// Edge 20+
+	var isEdge = !isIE && !!window.StyleMedia;
+
+	// Chrome 1 - 79
+	var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+
+	// Edge (based on chromium) detection
+	var isEdgeChromium = isChrome && (navigator.userAgent.indexOf("Edg") != -1);
+
+	// Blink engine detection
+	var isBlink = (isChrome || isOpera) && !!window.CSS;
+
+
+	if (isFirefox) return "firefox";
+	if (isChrome) return "chrome";
+	if (isSafari) return "safari";
+	if (isOpera) return "opera";
+	if (isIE) return "ie";
+	if (isEdge) return "edge";
+	if (isEdgeChromium) return "edge-chromium";
+	if (isBlink) return "blink";
+	return "";
+}
 
 Array.prototype.each = function(f) {
 	this.forEach((e, i) => f(e, i));

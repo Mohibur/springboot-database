@@ -1,7 +1,7 @@
 /**
  * 
  */
-package simple.mind.dbplayer.ctrl;
+package simple.mind.dbplayer;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -19,8 +19,6 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -28,40 +26,51 @@ import lombok.extern.log4j.Log4j2;
  *
  */
 @Log4j2
-class DatabaseOperation {
+final class MariaDBOperation implements DatabaseOperation {
 
   private DataSource datasource;
 
   private Connection conn;
 
-  @Autowired
-  public DatabaseOperation(DataSource datasource) {
+  private Map<String, String> variableMap;
+  private Map<String, String> importMap;
+
+  public MariaDBOperation(DataSource datasource) {
     try {
       this.datasource = datasource;
       conn = this.datasource.getConnection();
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
+
+    variableMap = new HashMap<String, String>();
+    variableMap.put("INTEGER", "Integer");
+    variableMap.put("BIGINT", "Long");
+    variableMap.put("DATE", "LocalDate");
+    variableMap.put("DATETIME", "LocalDateTime");
+    variableMap.put("TIMESTAMP", "LocalDateTime");
+    variableMap.put("TIME", "LocalTime");
+
+    importMap = new HashMap<String, String>();
+    importMap.put("LocalDate", "java.time.LocalDate");
+    importMap.put("LocalDateTime", "java.time.LocalDateTime");
+    importMap.put("LocalTime", "java.time.LocalTime");
   }
 
-  List<String> getTableList() {
+  public List<String> tableList() {
     try {
-      List<String> l = new ArrayList<String>();
-      DatabaseMetaData md = conn.getMetaData();
-      ResultSet rs = md.getTables(null, null, "%", null);
+      DatabaseMetaData dbMeta = conn.getMetaData();
+      // con.getCatalog() returns database name
+      ResultSet rs = dbMeta.getTables(conn.getCatalog(), "", null, new String[] { "TABLE" });
+      ArrayList<String> tables = new ArrayList<String>();
       while (rs.next()) {
-        if (rs.getString(2).matches("PUBLIC"))
-          l.add(rs.getString(3));
+        String tableName = rs.getString("TABLE_NAME");
+        tables.add(tableName);
       }
-      rs.close();
-      return l;
+      return tables;
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public String showTableString(String tableName) {
-    return "SHOW COLUMNS FROM " + tableName;
   }
 
   private List<String> getColumnNames(ResultSetMetaData meta, boolean isCatalog) {
@@ -111,7 +120,7 @@ class DatabaseOperation {
     }
   }
 
-  public ResultGeneric<Map<String, String>> execute(String query) {
+  public ResultGeneric<Map<String, String>> otherQueries(String query) {
     log.info("query: " + query);
     String query1 = query.trim().toLowerCase();
     if (query1.startsWith("create table ")) {
@@ -151,7 +160,7 @@ class DatabaseOperation {
     return null;
   }
 
-  List<List<String>> executeQuery(String query) {
+  public List<List<String>> selectQuery(String query) {
     try {
       List<List<String>> list = new ArrayList<>();
       PreparedStatement stmt = conn.prepareStatement(query);
@@ -194,8 +203,7 @@ class DatabaseOperation {
       stmt.close();
       String msg = "Insertion is successful.";
       log.info("Key: " + key);
-      if (key > 0)
-        msg += " Inserted Key: " + key;
+      if (key > 0) msg += " Inserted Key: " + key;
       return ResultGeneric.success(getMapMsg(msg));
     } catch (Exception e) {
       return ResultGeneric.fail(getMapMsg(e.getMessage()));
@@ -207,15 +215,30 @@ class DatabaseOperation {
     Pattern pattern = Pattern.compile("^(insert)\\s+(into)\\s+(table)?\\s(.*?)[\s(]", Pattern.CASE_INSENSITIVE);
     Matcher matcher = pattern.matcher(query.trim());
     if (matcher.find()) {
-      if (!matcher.group(1).toLowerCase().matches("insert"))
-        return "";
-      if (!matcher.group(2).toLowerCase().matches("into"))
-        return "";
-      if (matcher.group(3) != null && !matcher.group(3).toLowerCase().matches("table"))
-        return "";
+      if (!matcher.group(1).toLowerCase().matches("insert")) return "";
+      if (!matcher.group(2).toLowerCase().matches("into")) return "";
+      if (matcher.group(3) != null && !matcher.group(3).toLowerCase().matches("table")) return "";
       return matcher.group(4);
     }
     return "";
   }
 
+  public String getJavaVariableMap(String name) {
+    String ret = variableMap.get(name.toUpperCase());
+    return ret == null ? "String" : ret;
+  }
+
+  public String getJavaImport(String vname) {
+    return importMap.get(vname);
+  }
+
+  @Override
+  public ResultGeneric<List<List<String>>> descTable(String tableName) {
+    String query = "SHOW COLUMNS FROM " + tableName;
+    try {
+      return ResultGeneric.success(selectQuery(query));
+    } catch (Exception e) {
+      return ResultGeneric.fail();
+    }
+  }
 }

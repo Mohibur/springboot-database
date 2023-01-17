@@ -1,4 +1,4 @@
-package simple.mind.dbplayer.ctrl;
+package simple.mind.dbplayer;
 
 import java.util.Date;
 

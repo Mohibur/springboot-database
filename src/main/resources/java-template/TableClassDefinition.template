@@ -1,23 +1,19 @@
 package ##PACKAGE_NAME##;
 
-#begin java
-import ##import##;
-#end java
-
-#begin hibernate
-import ##import##;
-#end hibernate
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-#begin jakarta
-import ##import##;
+
+#start jakarta
+import ##IMPORT##;
 #end jakarta
 
 
+#start additional
+import ##IMPORT##;
+#end additional
 
 @Entity
 @Data
@@ -27,7 +23,7 @@ public class ##CLASS_NAME## {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private ##ID_TYPE## ##ID##;
 
-  #begin column
+  #start column
   #insert annotation
   private ##TYPE## ##COLUMN_NAME##;
   #end column

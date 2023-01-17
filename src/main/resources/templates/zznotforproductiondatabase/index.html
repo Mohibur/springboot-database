@@ -29,20 +29,8 @@
 				<div id="main-tab-window" style="width: 100%"></div>
 			</td>
 			<td style="vertical-align: top; border: 1px solid #afafaf20;">
-				<table class="table-def">
-					<caption id="cption">Select a table from the left</caption>
-					<thead>
-						<tr class="title">
-							<td style="width: 200px;">FIELD</td>
-							<td style="width: 105px;">TYPE</td>
-							<td style="width: 55px;">NULL</td>
-							<td style="width: 105px;">KEY</td>
-							<td style="width: 180px;">DEFAULT</td>
-						</tr>
-					</thead>
-					<tbody id="tableWindow"></tbody>
-					<th:block th:insert="~{zznotforproductiondatabase/table-operations}"></th:block>
-				</table> <th:block th:insert="~{zznotforproductiondatabase/form}"></th:block>
+				<th:block th:insert="~{zznotforproductiondatabase/desctable}"></th:block>
+				<th:block th:insert="~{zznotforproductiondatabase/form}"></th:block>
 			</td>
 		</tr>
 		<tr>
