@@ -158,6 +158,11 @@ class GeneralHTMLProcessor {
 		this.#html.innerHTML = v;
 		return this;
 	}
+	outer() {
+		if (typeof v == "undefined") return this.#html.innerHTML;
+		this.#html.outerHTML = v;
+		return this;
+	}
 
 	form(v) {
 		if (this.#html[v] == null) return null;

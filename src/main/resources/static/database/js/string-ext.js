@@ -25,3 +25,11 @@ String.prototype.isFalse = function(v) {
 	return false;
 }
 
+String.prototype.encode = function() {
+	return this
+		.replaceAll(/&/g, "&amp;")
+		.replaceAll(/ /g, "&nbsp;")
+		.replaceAll(/\t/g, "&emsp;")
+		.replaceAll(/</g, "&lt;")
+		.replaceAll(/>/g, "&gt;")
+}

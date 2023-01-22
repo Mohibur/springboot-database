@@ -43,6 +43,22 @@ public class DemoApplication {
 
 ```
 
+## Add property
+
+1. YML
+
+```yml
+simple:
+  mind:
+    dbplayer: mariadb
+```
+
+2. Properties
+
+```
+simple.mind.dbplayer=mariadb
+```
+
 
 ## Tested on db
 
