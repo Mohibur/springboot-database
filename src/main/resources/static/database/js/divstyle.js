@@ -23,7 +23,7 @@ class DivStyle {
 				text-align: right;
 				font-size: 12px;
 				line-height: 16px;
-				overflow-y: scroll;
+				overflow-y: hidden;
 			}
 
 			.editor-div-${this.#commonid} {
@@ -49,10 +49,15 @@ class DivStyle {
 		let rect = this.#editorDiv.rect();
 		this.#lineDiv.css("left", (rect.left + 1) + "px").css("top", (rect.top + 1) + "px");
 		this.#editorDiv.on('scroll', () => {
-			this.#lineDiv.scrlTop(this.#editorDiv.scrlTop());
-			this.#lineDiv.scrlLeft(this.#editorDiv.scrlLeft());
+			this.#lineDiv.scrollTop(this.#editorDiv.scrollTop());
 		});
 	}
+
+	setWidth(width) {
+		this.#editorDiv.css("width", parseFloat(width) + "px");
+		return this;
+	}
+
 
 	setHeight(height) {
 		height = parseFloat(height);
@@ -72,12 +77,27 @@ class DivStyle {
 		this.#editorDiv.css("line-height", height + "px");
 	}
 
+	#setLine() {
+		let count = this.#editorDiv.text().split("\n").length;
+		let text = "1.";
+		for (let k = 2; k < count; k++) {
+			text += "<br>" + k + ".";
+		}
+		this.#lineDiv.html(text);
+		return this;
+	}
+
 	html() {
 		return this.#editorDiv.html();
 	}
 
+	text() {
+		return this.#editorDiv.text();
+	}
+
 	setText(text, tokenClass) {
 		this.#editorDiv.html(Token.ProcessTokens(text, tokenClass));
+		this.#setLine();
 		return this;
 	}
 }
