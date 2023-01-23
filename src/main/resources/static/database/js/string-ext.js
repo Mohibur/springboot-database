@@ -32,4 +32,5 @@ String.prototype.encode = function() {
 		.replaceAll(/\t/g, "&emsp;")
 		.replaceAll(/</g, "&lt;")
 		.replaceAll(/>/g, "&gt;")
+		.replaceAll(/\n/g, "<br>");
 }
