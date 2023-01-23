@@ -96,20 +96,20 @@ class GeneralHTMLProcessor {
 	isDisabled() {
 		return this.#html.disabled === true || this.#html.disabled == "true";
 	}
-	
+
 	editable(v) {
 		if (typeof v == "undefined") return this.#html.contentEditable;
 		this.#html.contentEditable = v;
 		return this;
 	}
 
-	scrlLeft(v) {
+	scrollLeft(v) {
 		if (typeof v == "undefined") return this.#html.scrollLeft;
 		this.#html.scrollLeft = v;
 		return this;
 	}
 
-	scrlTop() {
+	scrollTop(v) {
 		if (typeof v == "undefined") return this.#html.scrollTop;
 		this.#html.scrollTop = v;
 		return this;
