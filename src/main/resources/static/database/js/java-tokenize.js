@@ -6,6 +6,13 @@ class JavaTokenClass {
 		TYPE: "PACKAGE"
 	};
 
+	static #comment = {
+		CSS: "color:#117311;",
+		KW: [],
+		TYPE: "COMMENT"
+	};
+
+
 	static #primitive = {
 		CSS: "color:blue; font-weight:bold;",
 		KW: ["int", "long", "var", "float", "double", "String", "null", "class"],
@@ -88,8 +95,10 @@ class JavaTokenClass {
 	}
 
 	static #setCssKey(tokenObj) {
-		// import, package
-		if (JavaTokenClass.#isNumber(tokenObj.token())) {
+		if (tokenObj.type() == JavaTokenClass.#comment.TYPE) {
+			tokenObj.cssKey(JavaTokenClass.#comment.CSS);
+		} else if (JavaTokenClass.#isNumber(tokenObj.token())) {
+			// import, package
 			tokenObj.cssKey(JavaTokenClass.#number.CSS);
 			tokenObj.type(JavaTokenClass.#number.TYPE);
 		} else if (tokenObj.token() == JavaTokenClass.#dot.KW) {
@@ -129,6 +138,10 @@ class JavaTokenClass {
 			tokenObj.cssKey(JavaTokenClass.#variable.CSS);
 			tokenObj.type(JavaTokenClass.#variable.TYPE);
 		}
+	}
+
+	commentRule() {
+		return [CommentRules.SL_C, CommentRules.ML_C];
 	}
 
 	construct(tokens) {
