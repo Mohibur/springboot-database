@@ -1,3 +1,16 @@
+// TODO implement parsing comment
+class CommentRules {
+	static SL_C = CommentRules.set("//", "\n", false);
+	static SL_BASH = CommentRules.set("#", "\n", false);
+	static SL_SQL = CommentRules.set("--", "\n", false);
+	static ML_C = CommentRules.set("/*", "*/", true);
+	static ML_XML = CommentRules.set("<!--", "-->", true);
+
+	static set(start, end, addend) {
+		return { start: start, end: end, addend: addend };
+	}
+}
+
 class Token {
 	/*statics*/
 	static #symbol = ["+", "-", "*", "/", "|", "&", "!", "%", "=",
@@ -53,7 +66,52 @@ class Token {
 		return "<span style='" + this.#cssKey + "'>" + this.#token.encode() + "</span>"
 	}
 
-	static Tokenize(str) {
+	static #getTokenByCount(strArr, length, index) {
+		let ret = "";
+		let end = index + length;
+		for (; index < strArr.length && index < end; index++) {
+			ret += strArr[index];
+		}
+		return { token: ret, index: index }
+	}
+
+	static #getIndividualComment(strArr, i, range) {
+		let retMethod = function(token, index) {
+			return { token: token, index: index };
+		}
+		let endLen = range.end.length;
+		let start = this.#getTokenByCount(strArr, range.start.length, i);
+		if (typeof start == "undefined") return;
+		if (start.token == range.start) {
+			let comment = start.token;
+			for (i = i + start.token.length; i < strArr.length; i++) {
+				//##### TODO do this shit
+				let end = Token.#getTokenByCount(strArr, endLen, i);
+				if (end.token == range.end) {
+					if (range.addend) {
+						comment += end.token;
+						end.index--;
+					} else {
+						end.index -= endLen + 1;
+					}
+					return retMethod(comment, end.index);
+				}
+				comment += strArr[i];
+			}
+			return retMethod(comment, i);
+		}
+		return; // returning undefined;
+	}
+
+	static #getComment(strArr, index, tokenClass) {
+		let rules = tokenClass.commentRule();
+		for (let i = 0; i < rules.length; i++) {
+			let ret = Token.#getIndividualComment(strArr, index, rules[i]);
+			if (typeof ret != "undefined") return ret;
+		}
+	}
+
+	static Tokenize(str, tokenClass) {
 		let strArr = str.split("");
 		let currentToken = null;
 		let start = null;
@@ -61,7 +119,14 @@ class Token {
 			let c = strArr[i];
 			let cc = c;
 			let newToken = null;
-			if (c == "'" || c == '"') {
+
+			let comment = Token.#getComment(strArr, i, tokenClass);
+			let type = undefined;
+			if (typeof comment != "undefined") {
+				i = comment.index;
+				cc = comment.token;
+				type = "COMMENT";
+			} else if (c == "'" || c == '"') {
 				let res = Token.#getQuote(strArr, i, c);
 				cc = res.token;
 				i = res.index;
@@ -81,7 +146,7 @@ class Token {
 				i = res.index;
 			}
 
-			newToken = Token.#getNewToken(cc, currentToken);
+			newToken = Token.#getNewToken(cc, currentToken, type);
 			if (currentToken == null) {
 				start = newToken;
 			} else currentToken.#next = newToken;
@@ -113,10 +178,11 @@ class Token {
 		return { index: i - 1, token: ret };
 	}
 
-	static #getNewToken(str, prev) {
+	static #getNewToken(str, prev, type) {
 		let ret = new Token();
 		ret.#token = str;
 		ret.#prev = prev;
+		ret.#type = type;
 		return ret;
 	}
 
@@ -127,7 +193,7 @@ class Token {
 	 *   whose job is guarantee all token has style set;
 	*/
 	static ProcessTokens(text, tokenClass) {
-		let tokens = Token.Tokenize(text);
+		let tokens = Token.Tokenize(text, tokenClass);
 		tokenClass.construct(tokens);
 
 		let token = tokens;
@@ -150,8 +216,9 @@ class Token {
 			line += token.tokenSpan();
 			token = token.next();
 		}
-
-		line = "<div>" + line + "</div>";
+		if (line == "") {
+			line = "<div><br></div>";
+		} else line = "<div>" + line + "</div>";
 		return { line: line, token: token };
 	}
 }
