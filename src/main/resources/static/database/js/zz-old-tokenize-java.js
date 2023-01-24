@@ -14,26 +14,26 @@ class JavaTokenClass {
 
 
 	static #primitive = {
-		CSS: "color:blue; font-weight:bold;",
+		CSS: "color:blue;",
 		KW: ["int", "long", "var", "float", "double", "String", "null", "class"],
 		TYPE: "PRIMITIVE"
 	};
 	// static, final
 	static #modifire = {
-		CSS: "color:blue; font-weight:bold;",
+		CSS: "color:blue;",
 		KW: ["static", "final"],
 		TYPE: "MODIFIRE"
 	};
 
 	// public, private, protectd
 	static #visibility = {
-		CSS: "color:blue; font-weight:bold;",
+		CSS: "color: #000088;",
 		KW: ["public", "private", "protected"],
 		TYPE: "VISIBILITY"
 	};
 
 	static #symbol = {
-		CSS: "color:#2d0400;",
+		CSS: "color: #68977d;",
 		KW: ["+", "-", "*", "/", "|", "&", "!", "%", "=",
 			"+=", "-=", "*=", "/=", "%=", "!=", "->", "|=", "&=", "&&", "||", "++", "--", ";"],
 		TYPE: "SYMBOL"
@@ -41,36 +41,36 @@ class JavaTokenClass {
 
 	// general variables
 	static #variable = {
-		CSS: "color:black;",
+		CSS: "color: #000000;",
 		TYPE: "VARIABLE"
 	};
 
 	static #double = {
 		KW: '"',
-		CSS: "color:#2d0aff;",
-		TYPE: "DOUBLEQUOTE"
+		CSS: "color: #2d0aff;",
+		TYPE: TokenTypes.DOUBLE
 	};
 	static #single = {
 		KW: "'",
 		CSS: "color:#3f8f3f;",
-		TYPE: "SINGLEQUOTE"
+		TYPE: TokenTypes.SINGLE
 	}
 
 	static #number = {
-		CSS: "color:gold;",
-		TYPE: "NUMBER"
+		CSS: "color: #847006;",
+		TYPE: TokenTypes.NUMBER
 	}
 
 	static #enclose = {
 		KW: ["[", "]", "{", "}", "(", ")"],
-		CSS: "color:#200410;",
+		CSS: "color:#570026;",
 		TYPE: "ENCLOSE"
 	}
 
 	static #whitespace = {
 		KW: [" ", "\t", "\n", "\r"],
 		CSS: "",
-		TYPE: "WHITESPACE"
+		TYPE: TokenTypes.WHITESPACE
 	}
 
 	static #dot = {
@@ -85,31 +85,20 @@ class JavaTokenClass {
 		TYPE: "DOT"
 	}
 
-	static #isNumber(token) {
-		if (token.match(/^[0-9.]+[fdl]$/)) {
-			token = token.slice(0, -1);
-		}
-		if (token.match(/^\s+$/)) return false;
-		token = Number(token);
-		return !isNaN(token);
-	}
-
 	static #setCssKey(tokenObj) {
-		if (tokenObj.type() == JavaTokenClass.#comment.TYPE) {
+		if (tokenObj.type() == TokenTypes.RANGE) {
 			tokenObj.cssKey(JavaTokenClass.#comment.CSS);
-		} else if (JavaTokenClass.#isNumber(tokenObj.token())) {
-			// import, package
+			tokenObj.type(JavaTokenClass.#comment.TYPE);
+		} else if (tokenObj.type() == TokenTypes.NUMBER) {
 			tokenObj.cssKey(JavaTokenClass.#number.CSS);
 			tokenObj.type(JavaTokenClass.#number.TYPE);
 		} else if (tokenObj.token() == JavaTokenClass.#dot.KW) {
 			tokenObj.cssKey(JavaTokenClass.#dot.CSS);
 			tokenObj.type(JavaTokenClass.#dot.TYPE);
-		} else if (tokenObj.token().startsWith(JavaTokenClass.#single.KW)) {
+		} else if (tokenObj.type() == TokenTypes.SINGLE) {
 			tokenObj.cssKey(JavaTokenClass.#single.CSS);
-			tokenObj.type(JavaTokenClass.#single.TYPE);
-		} else if (tokenObj.token().startsWith(JavaTokenClass.#double.KW)) {
+		} else if (tokenObj.type() == TokenTypes.DOUBLE) {
 			tokenObj.cssKey(JavaTokenClass.#double.CSS);
-			tokenObj.type(JavaTokenClass.#double.TYPE);
 		} else if (JavaTokenClass.#package.KW.contains(tokenObj.token())) {
 			tokenObj.cssKey(JavaTokenClass.#package.CSS);
 			tokenObj.type(JavaTokenClass.#package.TYPE);
@@ -128,9 +117,8 @@ class JavaTokenClass {
 		} else if (JavaTokenClass.#enclose.KW.contains(tokenObj.token())) {
 			tokenObj.cssKey(JavaTokenClass.#enclose.CSS);
 			tokenObj.type(JavaTokenClass.#enclose.TYPE);
-		} else if (tokenObj.token().match(/^\s+$/)) {
+		} else if (tokenObj.type() == TokenTypes.WHITESPACE) {
 			tokenObj.cssKey(JavaTokenClass.#whitespace.CSS);
-			tokenObj.type(JavaTokenClass.#whitespace.TYPE);
 		} else if (tokenObj.token().startsWith(JavaTokenClass.#annotation.KW)) {
 			tokenObj.cssKey(JavaTokenClass.#annotation.CSS);
 			tokenObj.type(JavaTokenClass.#annotation.TYPE);
@@ -140,8 +128,8 @@ class JavaTokenClass {
 		}
 	}
 
-	commentRule() {
-		return [CommentRules.SL_C, CommentRules.ML_C];
+	rangeRule() {
+		return [RangeRules.SL_C, RangeRules.ML_C];
 	}
 
 	construct(tokens) {
@@ -150,5 +138,14 @@ class JavaTokenClass {
 			JavaTokenClass.#setCssKey(token);
 			token = token.next();
 		}
+	}
+
+	isNumber(token) {
+		if (token.match(/^[0-9.]+[fdl]$/)) {
+			token = token.slice(0, -1);
+		}
+		if (token.match(/^\s+$/)) return false;
+		token = Number(token);
+		return !isNaN(token);
 	}
 }
