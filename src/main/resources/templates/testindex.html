@@ -5,12 +5,14 @@
 	<script src="/database/js/string-ext.js"></script>
 	<script src="/database/js/divstyle.js"></script>
 	<script src="/database/js/tokenize.js"></script>
-	<script src="/database/js/java-tokenize.js"></script>
+	<script src="/database/js/token-render.js"></script>
+	<script src="/database/js/token-java.js"></script>
+	<script src="/database/js/token-sql.js"></script>
 	<div id="theeditor"></div>
 	<script>
 	window.w = {};
 	w.editor = new DivStyle(theeditor);
-	w.editor.setText(`package simple.mind.dbplayer.main;
+	w.text = `package simple.mind.dbplayer.main;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +23,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @SpringBootApplication
 @ComponentScan("simple.mind.dbplayer")
 @Controller
+/*
+ * This is a sample comment;
+ */
 public class DBPlayerDemo {
 	public static void main(String[] args) {
 		SpringApplication.run(DBPlayerDemo.class, args);
@@ -28,10 +33,15 @@ public class DBPlayerDemo {
 
 	@GetMapping("/")
 	public String i() {
-		return "testindex";
+		int x = 10;
+		System.out.println(x);
+		return "test" + "index";
 	}
+	
 }
-`, new JavaTokenClass());
+`;
+
+	w.editor.setText(`SELECT "abc" as abc, 123.10 as num, \$\{hivevar:var\} var FROM mytable`, TokenSQL);
 
 </script>
 </body>
