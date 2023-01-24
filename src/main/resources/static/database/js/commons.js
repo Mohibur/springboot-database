@@ -671,9 +671,9 @@ let $$ = function(selectorAll) {
 
 $.isTrue = function(v) {
 	if (v == null || typeof v == "undefined") {
-		v = "";
+		return false;
 	}
-	if ((v !== 0 && v !== "0" && v !== "false") || v.toLowerCase() === "true" || v === true) return true;
+	if (v.toString().toLowerCase() === "true") return true;
 	return false;
 }
 
@@ -683,10 +683,9 @@ $.istrue = function(v) {
 
 $.isFalse = function(v) {
 	if (v == null || typeof v == "undefined") {
-		v = "";
+		return false;
 	}
-
-	if (v === 0 || v === "0" || v.toLowerCase() === "false" || v === false) return true;
+	if (v.toString().toLowerCase() === "false") return true;
 	return false;
 }
 
