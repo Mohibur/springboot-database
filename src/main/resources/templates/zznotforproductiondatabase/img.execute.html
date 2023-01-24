@@ -43,7 +43,8 @@
 		let tblname = w.getTableName(v);
 		let ajax =new Ajax().addData("query", v);
 		if(v == "") return;
-		$("#history").mk("div").title("Add to Editor").cls("query-history").text(v).on("click", function() { w.textEditor.text($(this).text()); w.tabWindow.goto("tab-editorWindow") } );
+		let data = RenderToken.ProcessTokens(v, TokenSQL);
+		$("#history").mk("div").title("Add to Editor").cls("query-history").html(data).on("click", function() { w.textEditor.text($(this).text()); w.tabWindow.goto("tab-editorWindow") } );
 		if(new RegExp(/^select /).test(v.trim().toLowerCase())) {
 			ajax.setPath("[[${path.SELECT_QUERY}]]").onSuccess(function(data) {
 				let len = data.result.length;
