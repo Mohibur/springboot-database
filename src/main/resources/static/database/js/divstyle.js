@@ -21,8 +21,8 @@ class DivStyle {
 				background: #afafaf;
 				padding:3px;
 				text-align: right;
-				font-size: 12px;
-				line-height: 16px;
+				font-size: 14px;
+				line-height: 18px;
 				overflow-y: hidden;
 			}
 
@@ -34,8 +34,8 @@ class DivStyle {
 				/*line-div width + 6 (padding 3+3) + 2*/
 				padding-left: 39px;
 				overflow-wrap: anywhere;
-				font-size: 12px;
-				line-height: 16px;
+				font-size: 14px;
+				line-height: 18px;
 				overflow-y: scroll;
 			}
 			.editor-div-${this.#commonid}:focus {
@@ -96,7 +96,7 @@ class DivStyle {
 	}
 
 	setText(text, tokenClass) {
-		this.#editorDiv.html(Token.ProcessTokens(text, tokenClass));
+		this.#editorDiv.html(RenderToken.ProcessTokens(text, tokenClass));
 		this.#setLine();
 		return this;
 	}
