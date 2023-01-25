@@ -410,7 +410,6 @@ class GeneralHTMLProcessor {
 	}
 
 	each(find, f) {
-
 		if (typeof find == "function") {
 			[...this.#html.childNodes].each((e, i) => find($(e), i));
 			return;
@@ -658,6 +657,12 @@ $.nullToObject = function(v, def) {
 	return v == null || typeof v == "undefined" ? def : v;
 }
 
+$.undefToNull = function(v) {
+	if (typeof v == "undefined") return null;
+	return v;
+}
+
+
 $.$$ = function(selectorAll) {
 	if (selectorAll instanceof GeneralHTMLProcessorAll) {
 		return selectorAll
@@ -741,14 +746,4 @@ $.ua = function() {
 	return "";
 }
 
-Array.prototype.each = function(f) {
-	this.forEach((e, i) => f(e, i));
-}
 
-Array.prototype.contains = function(v, s) {
-	return this.includes(v, s);
-}
-
-Array.prototype.has = function(v, s) {
-	return this.includes(v, s);
-}

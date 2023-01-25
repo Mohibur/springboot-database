@@ -1,4 +1,56 @@
 "use strict";
+String.prototype.matchCount = function(reg) {
+	return ([...this.matchAll(reg)] || []).length;
+}
+
+String.prototype.toInt = function() {
+	return parseInt(this);
+}
+
+String.prototype.toFloat = function() {
+	return parseFloat(this);
+}
+
+String.prototype.toNumber = function() {
+	return number(this);
+}
+
+
+String.prototype.isTrue = function() {
+	if ((this !== "0" && this.toLowerCase !== "false") || this.toLowerCase === "true") return true;
+	return false;
+}
+
+String.prototype.isFalse = function(v) {
+	if (this === "0" || this.toLowerCase() === "false") return true;
+	return false;
+}
+
+String.prototype.encode = function() {
+	return this
+		.replaceAll(/&/g, "&amp;")
+		.replaceAll(/ /g, "&nbsp;")
+		.replaceAll(/\t/g, "&emsp;")
+		.replaceAll(/</g, "&lt;")
+		.replaceAll(/>/g, "&gt;")
+}
+
+Array.prototype.each = function(f) {
+	this.forEach((e, i) => f(e, i));
+}
+
+Array.prototype.contains = function(v) {
+	return this.includes(v);
+}
+
+Array.prototype.has = function(v) {
+	return this.includes(v);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////Date Class///////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 //\\ FORMATS
 Date.prototype.formattedDate = function() {
 	return (this.getFullYear()) + "-" + this.paddedMonth() + "-" + this.paddedDate();
@@ -13,7 +65,7 @@ Date.prototype.toString = function() {
 }
 
 Date.prototype.getFullMonth = function() {
-	return ["January", "February", "March", "April", "May",	"June", "July", "August", "September", "October", "November", "December"][this.getMonth()];
+	return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][this.getMonth()];
 }
 
 Date.prototype.getShortMonth = function() {
@@ -115,10 +167,10 @@ Date.prototype.isOldMonth = function(d) {
 }
 
 Date.prototype.isFuture = function(d) {
-	return  this.getFullYear() < d.getFullYear() ||
-		(this.getFullYear() == d.getFullYear() && 
-		 	(this.getMonth() < d.getMonth() ||
-	        	(this.getMonth() == d.getMonth() && this.getDate() < d.getDate())));
+	return this.getFullYear() < d.getFullYear() ||
+		(this.getFullYear() == d.getFullYear() &&
+			(this.getMonth() < d.getMonth() ||
+				(this.getMonth() == d.getMonth() && this.getDate() < d.getDate())));
 }
 
 Date.prototype.isSatOrSun = function() {
