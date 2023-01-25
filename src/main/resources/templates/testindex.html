@@ -2,10 +2,10 @@
 <html>
 <body>
 	<script src="/database/js/commons.js"></script>
-	<script src="/database/js/string-ext.js"></script>
+	<script src="/database/js/javascript-ext.js"></script>
 	<script src="/database/js/divstyle.js"></script>
+	<script src="/database/js/token.js"></script>
 	<script src="/database/js/tokenize.js"></script>
-	<script src="/database/js/token-render.js"></script>
 	<script src="/database/js/token-java.js"></script>
 	<script src="/database/js/token-sql.js"></script>
 	<div id="theeditor"></div>
@@ -35,13 +35,16 @@ public class DBPlayerDemo {
 	public String i() {
 		int x = 10;
 		System.out.println(x);
+		System.out.println("""
+				This is what it is
+				""");
 		return "test" + "index";
 	}
 	
 }
 `;
 
-	w.editor.setText(`SELECT "abc" as abc, 123.10 as num, \$\{hivevar:var\} var FROM mytable`, TokenSQL);
+	w.editor.setText(w.text, TokenJava);
 
 </script>
 </body>

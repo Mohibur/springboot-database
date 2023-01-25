@@ -7,6 +7,9 @@ TokenJava = {
 	}, {
 		rule: RangeRules.ML_C,
 		css: "color:#117311;"
+	}, {
+		rule: RangeRules.ML_JAVA,
+		css: "color:#000088;"
 	}],
 	// will use provided funtion. 
 	// if no function is provided then default 

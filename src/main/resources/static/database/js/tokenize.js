@@ -1,102 +1,81 @@
-// TODO implement parsing comment
-class RangeRules {
-	static SL_C = RangeRules.set("//", "\n", false);
-	static SL_BASH = RangeRules.set("#", "\n", false);
-	static SL_SQL = RangeRules.set("--", "\n", false);
-	static ML_C = RangeRules.set("/*", "*/", true);
-	static ML_XML = RangeRules.set("<!--", "-->", true);
+// TODO Fix range comment, miss behaving right now.
+class RenderToken {
+	/*
+ * text: The text that would be parsed and rendered.
+ * tokenClass: tokenClass must provide function construct
+ *   whose job is guarantee all token has style set;
+*/
+	static ProcessTokens(text, tokenClass) {
+		let tokens = new Tokenize(text, tokenClass).tokenize();
+		let token = tokens;
+		let line = "";
+		while (token != null) {
+			let r = RenderToken.#getNewLine(token);
+			line += r.line;
+			token = r.token;
+		}
+		return line;
+	}
 
-	static set(start, end, addend) {
-		return { start: start, end: end, addend: addend };
+	static #getNewLine(token) {
+		let line = "";
+		while (token != null) {
+			if (token.token() == "\n") {
+				token = token.next();
+				break;
+			}
+			line += token.tokenSpan();
+			token = token.next();
+		}
+		if (line == "") {
+			line = "<div><br></div>";
+		} else line = "<div>" + line + "</div>";
+		return { line: line, token: token };
 	}
 }
 
-class TokenTypes {
-	static RANGE = "RANGE";
-	static SINGLE = "SINGLE";
-	static DOUBLE = "DOUBLE";
-	static NUMBER = "NUMBER";
-	static NEWLINE = "NEWLINE";
-	static WHITESPACE = "WHITESPACE";
-	static STARTEND = "STARTEND";
-}
 
-class Token {
-
+class Tokenize {
 	/*statics*/
-	static #symbol = ["+", "-", "*", "/", "|", "&", "!", "%", "=",
+	#symbol = ["+", "-", "*", "/", "|", "&", "!", "%", "=",
 		"+=", "-=", "*=", "/=", "%=", "!=", "->", "|=", "&=", "&&", "||", "++", "--", ";"];
-	static #enclose = ["[", "]", "{", "}", "(", ")"];
-	static #whitespace = [" ", "\t", "\n", "\r"];
+	#enclose = ["[", "]", "{", "}", "(", ")"];
+	#whitespace = [" ", "\t", "\n", "\r"];
+	#strArr = [];
+	#tokenDef = null;
 
-	#token;
-	#type;
-	#cssKey;
-	// previous token
-	#prev;
-	// next token 
-	#next;
-
-	constructor() {
-		this.#prev = null;
-		this.#prev = null;
+	constructor(string, tokenDef) {
+		this.#strArr = string.split("");
+		this.#tokenDef = $.undefToNull(tokenDef);
 		return this;
 	}
 
-	prev(prev) {
-		if (typeof prev == "undefined") return this.#prev;
-		this.#prev = prev;
+	addSymbol(chr) {
+		this.#symbol = this.#symbol.concat(chr);
 		return this;
 	}
 
-	next(next) {
-		if (typeof next == "undefined") return this.#next;
-		this.#next = next;
-		return this;
-	}
-
-	token(token) {
-		if (typeof token == "undefined") return this.#token;
-		this.#token = token;
-		return this;
-	}
-
-	type(type) {
-		if (typeof type == "undefined") return this.#type;
-		this.#type = type;
-		return this;
-	}
-
-	cssKey(cssKey) {
-		if (typeof cssKey == "undefined") return this.#cssKey;
-		this.#cssKey = cssKey;
-		return this;
-	}
-
-	tokenSpan() {
-		return "<span style='" + this.#cssKey + "'>" + this.#token.encode() + "</span>"
-	}
-
-	static #getTokenByCount(strArr, length, index) {
+	#getTokenByCount(length, index) {
 		let ret = "";
 		let end = index + length;
-		for (; index < strArr.length && index < end; index++) {
-			ret += strArr[index];
+		for (; index < this.#strArr.length && index < end; index++) {
+			ret += this.#strArr[index];
 		}
 		return { token: ret, index: index }
 	}
 
-	static #getIndividualIfRange(strArr, i, range) {
-		let retMethod = function(token, index) {
-			return { token: token, index: index };
-		}
+	#retMethod(token, index) {
+		return { token: token, index: index };
+	}
+
+	#getIndividualIfRange(i, range) {
 		let endLen = range.end.length;
-		let start = this.#getTokenByCount(strArr, range.start.length, i);
+		let start = this.#getTokenByCount(range.start.length, i);
 		if (typeof start == "undefined") return;
 		if (start.token == range.start) {
 			let comment = start.token;
-			for (i = i + start.token.length; i < strArr.length; i++) {
-				let end = Token.#getTokenByCount(strArr, endLen, i);
+			for (i = i + start.token.length; i < this.#strArr.length; i++) {
+				let end = this.#getTokenByCount(endLen, i);
 				if (end.token == range.end) {
 					if (range.addend) {
 						comment += end.token;
@@ -104,121 +83,137 @@ class Token {
 					} else {
 						end.index -= endLen + 1;
 					}
-					return retMethod(comment, end.index);
+					return this.#retMethod(comment, end.index);
 				}
-				comment += strArr[i];
+				comment += this.#strArr[i];
 			}
 			return retMethod(comment, i);
 		}
 		return; // returning undefined;
 	}
 
-	static #getIfRange(strArr, index, tokenClass) {
-		let rules = tokenClass.range;
+	#getIfRange(index) {
+		if (this.#tokenDef == null) return;
+		let rules = this.#tokenDef.range;
 		for (let i = 0; i < rules.length; i++) {
-			let ret = Token.#getIndividualIfRange(strArr, index, rules[i].rule);
+			let ret = this.#getIndividualIfRange(index, rules[i].rule);
 			if (typeof ret != "undefined") return ret;
 		}
 	}
 
-	static Tokenize(str, tokenDef) {
-		let strArr = str.split("");
+	tokenize() {
 		let currentToken = null;
 		let start = null;
-		for (let i = 0; i < strArr.length; i++) {
-			let c = strArr[i];
+		for (let i = 0; i < this.#strArr.length; i++) {
+			let c = this.#strArr[i];
 			let cc = c;
 			let newToken = null;
 
-			let comment = Token.#getIfRange(strArr, i, tokenDef);
+			let rangeText = this.#getIfRange(i);
 			let type = undefined;
-			if (typeof comment != "undefined") {
-				i = comment.index;
-				cc = comment.token;
+			if (typeof rangeText != "undefined") {
+				i = rangeText.index;
+				cc = rangeText.token;
 			} else if (c == "'" || c == '"') {
-				let res = Token.#getQuote(strArr, i, c);
+				let res = this.#getQuote(i);
 				cc = res.token;
 				i = res.index;
 				type = res.type;
-			} else if (Token.#symbol.contains(c) && Token.#symbol.contains(strArr[i + 1])) {
+			} else if (this.#symbol.contains(c) && this.#symbol.contains(this.#strArr[i + 1])) {
 				// got pair
-				cc = c + strArr[i + 1];
+				cc = c + this.#strArr[i + 1];
 				i++;
-			} else if (Token.#whitespace.contains(c)) {
+			} else if (this.#whitespace.contains(c)) {
 				// noope
-			} else if (Token.#symbol.contains(c)) {
+			} else if (this.#symbol.contains(c)) {
 				// noope
-			} else if (Token.#enclose.contains(c)) {
+			} else if (this.#enclose.contains(c)) {
 				// nope
 			} else {
-				let res = Token.#getWord(strArr, i);
+				let res = this.#getWord(i);
 				cc = res.token;
 				i = res.index;
 			}
-
-			newToken = Token.#getNewToken(cc, currentToken, tokenDef, type);
-			if (currentToken == null) {
-				start = newToken;
-			} else currentToken.#next = newToken;
-			currentToken = newToken;
+			if (!Array.isArray(cc)) {
+				cc = [].concat(cc);
+			}
+			// adding each item
+			cc.each(tok => {
+				newToken = this.#getNewToken(tok, currentToken, type);
+				if (currentToken == null) {
+					start = newToken;
+				} else currentToken.next(newToken);
+				currentToken = newToken;
+			})
 		}
 		return start;
 	}
 
-	static #getQuote(strArr, index) {
-		let quote = strArr[index];
+	#getQuote(index) {
+		let arr = this.#strArr
+		let quote = arr[index];
 		let ret = quote;
-		let i = index + 1;
-		for (; i < strArr.length && strArr[i] != "\n"; i++) {
-			ret += strArr[i];
-			if (quote == strArr[i] && strArr[i - 1] != "\\") break;
+		index++;
+		for (; index < arr.length && arr[index] != "\n"; index++) {
+			ret += arr[index];
+			if (quote == arr[index] && arr[index - 1] != "\\") break;
 		}
 
 		return {
-			index: i,
+			index: index,
 			token: ret,
 			type: quote == '"' ? TokenTypes.DOUBLE : TokenTypes.SINGLE
 		};
 	}
 
-	static #getWord(strArr, index) {
-		let ret = strArr[index];
-		let i = index + 1;
-		for (; i < strArr.length; i++) {
-			if (Token.#symbol.contains(strArr[i])) break;
-			if (Token.#enclose.contains(strArr[i])) break;
-			if (Token.#whitespace.contains(strArr[i])) break;
-			ret += strArr[i];
+	#getWord(index) {
+		let word = this.#strArr[index];
+		index++;
+		for (; index < this.#strArr.length; index++) {
+			let cc = this.#strArr[index];
+			if (this.#symbol.contains(cc)) break;
+			if (this.#enclose.contains(cc)) break;
+			if (this.#whitespace.contains(cc)) break;
+			word += cc;
 		}
-		return { index: i - 1, token: ret };
+		// WORKING HERE
+		if (Tokenize.isNumber(word)) {
+			word = [].concat(word);
+		} else {
+			word = word.split(/(\.)/g)
+		}
+		return { index: index - 1, token: word };
 	}
 
-	static #getNewToken(str, prev, tokenDef, type) {
+	#getNewToken(str, prev, type) {
 		let ret = new Token();
-		ret.#token = str;
-		ret.#prev = prev;
-		ret.#type = type;
-		Token.#setCssAndType(ret, tokenDef);
+		ret.token(str);
+		ret.prev(prev);
+		ret.next(null);
+		ret.type(type);
+		this.#setCssAndType(ret);
 		return ret;
 	}
 
-	static #setCssAndType(token, tokenDef) {
+	#setCssAndType(token) {
+		if (this.#tokenDef == null) return;
+		let td = this.#tokenDef;
 		let str = token.token();
 		// match single
-		if (token.type == TokenTypes.SINGLE && typeof tokenDef.single != "undefined") {
-			token.cssKey(tokenDef.single.css);
+		if (token.type() == TokenTypes.SINGLE && typeof td.single != "undefined") {
+			token.cssKey(td.single.css);
 			return;
 		}
 
 		// match double
-		if (token.type == TokenTypes.DOUBLE && typeof tokenDef.double != "undefined") {
-			token.cssKey(tokenDef.double.css);
+		if (token.type() == TokenTypes.DOUBLE && typeof td.double != "undefined") {
+			token.cssKey(td.double.css);
 			return;
 		}
 
 		// match if part of range
-		for (let i = 0; typeof tokenDef.range != "undefined" && i < tokenDef.range.length; i++) {
-			let r = tokenDef.range[i]
+		for (let i = 0; typeof td.range != "undefined" && i < td.range.length; i++) {
+			let r = td.range[i]
 			if (str.startsWith(r.rule.start)) {
 				// no need to check end
 				token.type(TokenTypes.RANGE);
@@ -229,23 +224,22 @@ class Token {
 
 		// check if number
 		let numberf;
-		if (typeof tokenDef.number == "object" && typeof tokenDef.number.rule == "function") {
-			numberf = tokenDef.number.rule;
+		if (typeof td.number == "object" && typeof td.number.rule == "function") {
+			numberf = td.number.rule;
 		} else {
-			numberf = Token.IsNumber;
+			numberf = Tokenize.isNumber;
 		}
 		if (numberf(str)) {
 			token.type(TokenTypes.NUMBER);
-			token.cssKey(tokenDef.number.css);
+			token.cssKey(td.number.css);
 			return;
 		}
 		// check if there is any startsWith and EndsWith check is there
 		// similar yet seperate to range
-		if (typeof tokenDef.startEnd != "undefined") {
-			for (let i = 0; i < i < tokenDef.startEnd.length; i++) {
-				let se = tokenDef.startEnd[i];
-				if (
-					(typeof se.startsWith == "undefined" || str.startsWith(se.startsWith)) && (typeof se.endsWith == "undefined" || str.startsWith(se.endsWith))) {
+		if (typeof td.startEnd != "undefined") {
+			for (let i = 0; i < td.startEnd.length; i++) {
+				let se = td.startEnd[i];
+				if ((typeof se.startsWith == "undefined" || str.startsWith(se.startsWith)) && (typeof se.endsWith == "undefined" || str.startsWith(se.endsWith))) {
 					token.type(se.type);
 					token.cssKey(se.css);
 					return;
@@ -254,43 +248,43 @@ class Token {
 		}
 
 		// pattern match
-		if (typeof tokenDef.matches != "undefined") {
-			for (let i = 0; i < i < tokenDef.matches.length; i++) {
-				if (tokenDef.matches[i].rule == "equal" && tokenDef.matches[i].match == str) {
-					token.type(tokenDef.matches[i].type);
-					token.cssKey(tokenDef.matches[i].css);
+		if (typeof td.matches != "undefined") {
+			for (let i = 0; i < td.matches.length; i++) {
+				if (td.matches[i].rule == "equal" && td.matches[i].match == str) {
+					token.type(td.matches[i].type);
+					token.cssKey(td.matches[i].css);
 					return;
 				}
-				if (tokenDef.matches[i].rule == "regexp" && str.matchAll(tokenDef.matches[i].match)) {
-					token.type(tokenDef.matches[i].type);
-					token.cssKey(tokenDef.matches[i].css);
+				if (td.matches[i].rule == "regexp" && str.matchAll(td.matches[i].match)) {
+					token.type(td.matches[i].type);
+					token.cssKey(td.matches[i].css);
 					return;
 				}
 			}
 		}
 		// keyword match
-		if (typeof tokenDef.contains != "undefined") {
-			for (let i = 0; i < tokenDef.contains.length; i++) {
+		if (typeof td.contains != "undefined") {
+			for (let i = 0; i < td.contains.length; i++) {
 				let strmatch = str;
-				if ($.isTrue(tokenDef.contains[i].anycase)) strmatch = strmatch.toUpperCase();
-				if (tokenDef.contains[i].kw.contains(strmatch)) {
-					token.type(tokenDef.contains[i].type); // not mandatory
-					token.cssKey(tokenDef.contains[i].css);
+				if ($.isTrue(td.contains[i].anycase)) strmatch = strmatch.toUpperCase();
+				if (td.contains[i].kw.contains(strmatch)) {
+					token.type(td.contains[i].type); // not mandatory
+					token.cssKey(td.contains[i].css);
 					return;
 				}
 			}
 		}
 
 		// rest of the shit
-		if (typeof tokenDef.rest != "undefined") {
-			token.type(tokenDef.rest.type);
-			token.cssKey(tokenDef.rest.css);
+		if (typeof td.rest != "undefined") {
+			token.type(td.rest.type);
+			token.cssKey(td.rest.css);
 		}
 	}
 
 
 
-	static IsNumber(token) {
+	static isNumber(token) {
 		if (token.match(/^[0-9.]$/)) {
 			token = token.slice(0, -1);
 		}
@@ -299,5 +293,4 @@ class Token {
 		token = Number(token);
 		return !isNaN(token);
 	}
-
 }
