@@ -1,4 +1,10 @@
 class TabWindow {
+	#tab_active_class
+	#tab_parent_class
+	#tab_class
+	#escape_class
+	#work_window_body
+
 	#motherwindow;
 	#tabwindow; // hold the tabs;
 	#processwindow; // window to hold the window 
@@ -7,29 +13,39 @@ class TabWindow {
 
 	constructor(selector) {
 		this.#commonid = $.makeid();
+		this.#setClassNames();
 		this.#motherwindow = $(selector);
 		this.#styleClass();
 		this.#createTabBock();
 		return this;
 	}
 
+
 	getCommonId() {
 		return this.#commonid;
 	}
 
 	#createTabBock() {
-		this.#tabwindow = this.#motherwindow.mk("div").addCls(`tab-parent-class-${this.#commonid}`);
+		this.#tabwindow = this.#motherwindow.mk("div").addCls(this.#tab_parent_class);
 		this.#motherwindow.mk("div").css("clear", "both");
-		this.#processwindow = this.#motherwindow.mk("div").addCls(`work-window-body-${this.#commonid}`);
-		this.#tabwindow.mk("div").addCls(`escape-class-${this.#commonid}`).html("&nbsp;");
+		this.#processwindow = this.#motherwindow.mk("div").addCls(this.#work_window_body);
+		this.#tabwindow.mk("div").addCls(this.#escape_class).html("&nbsp;");
+	}
+
+	#setClassNames() {
+		this.#tab_active_class = `tab-active-class-${this.#commonid}`;
+		this.#tab_parent_class = `tab-parent-class-${this.#commonid}`;
+		this.#tab_class = `tab-class-${this.#commonid}`;
+		this.#escape_class = `escape-class-${this.#commonid}`;
 	}
 
 	#styleClass() {
 		$.addStyle(`
-		.tab-parent-class-${this.#commonid} {
+		.${this.#tab_parent_class} {
 			background: white;
 		}
-		.tab-class-${this.#commonid} {
+
+		.${this.#tab_class} {
 			background: #afafaf89;
 			float: left;
 			max-width:120px;
@@ -43,11 +59,11 @@ class TabWindow {
 			margin-left: 5px;
 		}
 
-		.tab-class:hover-${this.#commonid} {
+		.${this.#tab_class}:hover {
 			background: #cfcfcf89;
 		}
 
-		.tab-active-class-${this.#commonid} {
+		.${this.#tab_active_class} {
 			background: #eff5ef;
 			font-weight:bold;
 			font-style: italic;
@@ -56,11 +72,11 @@ class TabWindow {
 			border-top-right-radius: 50px 50px;
 		}
 
-    .escape-class-${this.#commonid} {
-      float:left;
-    }
+		.${this.#escape_class} {
+			float:left;
+		}
 
-    .work-window-body-${this.#commonid} {
+    .${this.#work_window_body} {
       border-top: 1px solid #eff5ef;
       width: 100%;
       background: #eff5ef;
@@ -72,9 +88,9 @@ class TabWindow {
 	add(tabid, caption, selector, isactive, onclick) {
 		if (isactive == true || isactive === true) isactive = true;
 		else isactive = false;
-		let s = this.#tabwindow.mk("div").addCls(`tab-class-${this.#commonid}`).html(caption).id(tabid);
+		let s = this.#tabwindow.mk("div").addCls(this.#tab_class).html(caption).Id(tabid);
 
-		this.#tabwindow.mk("div").addCls(`escape-class-${this.#commonid}`).html("&nbsp;");
+		this.#tabwindow.mk("div").addCls(this.#escape_class).html("&nbsp;");
 		let w = $(selector);
 		this.#tabs[tabid] = { t: s, w: w };
 		this.#processwindow.append(w);
@@ -87,7 +103,7 @@ class TabWindow {
 
 		if (isactive) {
 			this.clearSelection();
-			s.addCls(`tab-active-class-${this.#commonid}`).show();
+			s.addCls(this.#tab_active_class).show();
 			w.show();
 		} else {
 			w.hide();
@@ -97,13 +113,13 @@ class TabWindow {
 
 	clearSelection() {
 		this.#processwindow.each(h => h.hide());
-		this.#tabwindow.each(`.tab-class-${this.#commonid}`, h => h.rmCls(`tab-active-class-${this.#commonid}`))
+		this.#tabwindow.each(this.#tab_class, h => h.rmCls(this.#tab_active_class))
 	}
 
 	goto(id, onclick) {
 		let { t, w } = this.#tabs[id];
 		this.clearSelection();
-		t.addCls(`tab-active-class-${this.getCommonId()}`);
+		t.addCls(this.#tab_active_class);
 		w.show();
 		if (typeof onclick == "function") onclick();
 	}

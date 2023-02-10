@@ -6,8 +6,8 @@ class DivStyle {
 
 	constructor(selector) {
 		this.#parentDiv = $(selector);
-		this.#lineDiv = this.#parentDiv.mk("div").cls(`line-div-${this.#commonid}`).html("1.");
-		this.#editorDiv = this.#parentDiv.mk("div").cls(`editor-div-${this.#commonid}`).editable(false);
+		this.#lineDiv = this.#parentDiv.mk("div").Cls(`line-div-${this.#commonid}`).html("1.");
+		this.#editorDiv = this.#parentDiv.mk("div").Cls(`editor-div-${this.#commonid}`).editable(false);
 		this.#setClass();
 		this.#configureEditor();
 	}
@@ -41,7 +41,7 @@ class DivStyle {
 			.editor-div-${this.#commonid}:focus {
 				outline-width: 0;
 			}
-		`, `style-${this.commonid}`)
+		`, `style-${this.#commonid}`)
 	}
 
 	#configureEditor() {

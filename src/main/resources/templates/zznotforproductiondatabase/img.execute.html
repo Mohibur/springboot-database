@@ -13,44 +13,45 @@
 		return r[r.length - 1].toUpperCase();
 	}
 	w.createRow = function(data, row, className, tblname) {
-		row.addCls(className);
+		row.AddCls(className);
 		data.forEach(e => {
-			let cell = row.cell();
-			cell.html(e);
-		})
+			let cell = row.Cell();
+			cell.Html(e);
+		});
+
 		if(tblname != "") {
-			let buttoncell = row.cell();
-			let img = buttoncell.child("img")
-			img.src(deleteButton);
-			if(row.index() > 0) {
-				img.click(function() {
-					let proRow = $(this).parent().parent();
-					let colCount = proRow.len();
+			let buttoncell = row.Cell();
+			let img = buttoncell.mk("img")
+			img.Src(deleteButton);
+			if(row.Index() > 0) {
+				img.on("click", function() {
+					let proRow = this.Parent().Parent();
+					let colCount = proRow.Length();
 					let cols = new StringJoiner(",\n");
 					proRow.parent().row(0).each("td", e=>{
 						let i = e.cellIndex();
-						if(i!=colCount-1)
-							cols.add("`"+e.html()+"` = '"+proRow.cell(i).html()+"'");
+						if(i != colCount - 1)
+							cols.add("`"+e.Html()+"` = '"+proRow.Cell(i).Html()+"'");
 					});
-					w.textEditor.text("DELETE FROM " + tblname + " WHERE \n" + cols.toString());
+					w.sqlText("DELETE FROM " + tblname + " WHERE \n" + cols.toString());
 				});
 			}
 		}
 	}
 
-	$("#execute").click(function() {
-		let v = w.textEditor.text().trim();
+	$("#execute").On("click",function() {
+		let v = w.sqlText().trim();
 		let tblname = w.getTableName(v);
 		let ajax =new Ajax().addData("query", v);
 		if(v == "") return;
 		let data = RenderToken.ProcessTokens(v, TokenSQL);
-		$("#history").mk("div").title("Add to Editor").cls("query-history").html(data).on("click", function() { w.textEditor.text($(this).text()); w.tabWindow.goto("tab-editorWindow") } );
+		$("#history").mk("div").Title("Add to Editor").Cls("query-history").Html(data).On("click", function() { w.sqlText(this.text()); w.tabWindow.goto("tab-editorWindow") } );
 		if(new RegExp(/^select /).test(v.trim().toLowerCase())) {
 			ajax.setPath("[[${path.SELECT_QUERY}]]").onSuccess(function(data) {
 				let len = data.result.length;
 				$("#executionResult").html("");
 				w.setExecutionTime(data.time);
-				let table = $("#executionResult").child("table");
+				let table = $("#executionResult").mk("table");
 				w.createRow(data.result[0], table.row(), "datatrhead", tblname);
 				for(let i = 1; i < len; i++) {
 					w.createRow(data.result[i], table.row(), "datatr", tblname);
@@ -70,7 +71,7 @@
 		new Ajax().path("[[${path.TABLE_LIST}]]/").onSuccess(function(data) {
 			let dbcols = {};
 			if(data.result.length > 0) parent.$("#notable").hide();
-			else parent.$("#notable").show();
+			else parent.$("#notable").Show();
 			parent.each(".divclass", de => dbcols[de.id()] = 1)
 			data.result.forEach(dta => dbcols[dta] = (dbcols[dta] == undefined) ? 2:dbcols[dta] + 2)
 			for(index in dbcols) {

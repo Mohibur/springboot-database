@@ -3,7 +3,7 @@ window.testw = {};
 testw.list = [];
 testw.testId = function(p) {
 	p.childNodes.forEach( e => {
-		let id = $.nullToString(e.id).trim();;
+		let id = z.nullToString(e.id).trim();;
 		if (id != "" && testw.list.contains(id))
 			console.log("duplicate: " + id);
 		else if(id != "") testw.list.push(id);

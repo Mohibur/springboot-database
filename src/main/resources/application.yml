@@ -8,9 +8,8 @@ spring:
    username: johny
    password: 1
    driver-class-name: org.mariadb.jdbc.Driver
+   testOnBorrow: true
 
-   
-   
 simple:
   mind:
     dbplayer: mariadb

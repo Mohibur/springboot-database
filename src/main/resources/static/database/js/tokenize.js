@@ -6,6 +6,7 @@ class RenderToken {
  *   whose job is guarantee all token has style set;
 */
 	static ProcessTokens(text, tokenClass) {
+		RenderToken.#addStyle();
 		let tokens = new Tokenize(text, tokenClass).tokenize();
 		let token = tokens;
 		let line = "";
@@ -15,6 +16,18 @@ class RenderToken {
 			token = r.token;
 		}
 		return line;
+	}
+
+	static #addStyle() {
+		$.addStyle(`
+			.tohover {
+				cursor: pointer
+			}
+			.tohover:hover {
+				background: #bfe3f97a;
+			}
+		`, 'tokenize-iTq0bxqowBB7z7v9HygG')
+
 	}
 
 	static #getNewLine(token) {
@@ -28,8 +41,8 @@ class RenderToken {
 			token = token.next();
 		}
 		if (line == "") {
-			line = "<div><br></div>";
-		} else line = "<div>" + line + "</div>";
+			line = "<div class='tohover'><br></div>";
+		} else line = "<div class='tohover'>" + line + "</div>";
 		return { line: line, token: token };
 	}
 }
@@ -114,6 +127,7 @@ class Tokenize {
 			if (typeof rangeText != "undefined") {
 				i = rangeText.index;
 				cc = rangeText.token;
+				type = TokenTypes.RANGE;
 			} else if (c == "'" || c == '"') {
 				let res = this.#getQuote(i);
 				cc = res.token;
@@ -134,9 +148,11 @@ class Tokenize {
 				cc = res.token;
 				i = res.index;
 			}
+
 			if (!Array.isArray(cc)) {
 				cc = [].concat(cc);
 			}
+
 			// adding each item
 			cc.each(tok => {
 				newToken = this.#getNewToken(tok, currentToken, type);

@@ -1,51 +1,31 @@
-<!doctype html>
-<html>
-<body>
-	<script src="/database/js/commons.js"></script>
-	<script src="/database/js/javascript-ext.js"></script>
-	<script src="/database/js/divstyle.js"></script>
-	<script src="/database/js/token.js"></script>
-	<script src="/database/js/tokenize.js"></script>
-	<script src="/database/js/token-java.js"></script>
-	<script src="/database/js/token-sql.js"></script>
-	<div id="theeditor"></div>
-	<script>
-	window.w = {};
-	w.editor = new DivStyle(theeditor);
-	w.text = `package simple.mind.dbplayer.main;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-
-@SpringBootApplication
-@ComponentScan("simple.mind.dbplayer")
-@Controller
-/*
- * This is a sample comment;
- */
-public class DBPlayerDemo {
-	public static void main(String[] args) {
-		SpringApplication.run(DBPlayerDemo.class, args);
-	}
-
-	@GetMapping("/")
-	public String i() {
-		int x = 10;
-		System.out.println(x);
-		System.out.println("""
-				This is what it is
-				""");
-		return "test" + "index";
-	}
-	
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>ACE in Action</title>
+<style type="text/css" media="screen">
+#editor {
+	/*position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	*/
+	height: 300px;
+	width:400px;
 }
-`;
+</style>
+</head>
+<body>
+	<div id="editor">function foo(items) {
+	var x = "All this is syntax highlighted"; 
+	return x;
+}</div>
+<script src="/database/js/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
-	w.editor.setText(w.text, TokenJava);
-
-</script>
+	<script>
+		var editor = ace.edit("editor");
+		editor.setTheme("ace/theme/monokai");
+		editor.session.setMode("ace/mode/sql");
+	</script>
 </body>
 </html>

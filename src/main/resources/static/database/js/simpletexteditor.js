@@ -1,4 +1,7 @@
 class SimpleTextEditor {
+	#editor_class
+	#line_counter_class;
+
 	#commonid;
 	#parent;
 	#lineCounter;
@@ -6,14 +9,17 @@ class SimpleTextEditor {
 	#lineCountCache;
 	constructor(selector) {
 		this.#commonid = $.makeid();
+		this.#setClass();
 		this.#parent = $(selector);
-		if(this.#parent instanceof ClassNotCreated) throw "Element not found";
 		this.#cons();
 	}
-
+	#setClass() {
+		this.#editor_class = `editor-class-${this.#commonid}`
+		this.#line_counter_class = `line-counter-class-${this.#commonid}`;
+	}
 	#blockerClass() {
 		$.addStyle(`
-		.editor-class-${this.#commonid}, .lineCounter-class-${this.#commonid} {
+		.${this.#editor_class}, .${this.#line_counter_class} {
 			font-size: 12px;
 			line-height: 16px;
 			outline: none;
@@ -21,7 +27,7 @@ class SimpleTextEditor {
 			height: 400px;
 		}
 
-		.editor-class-${this.#commonid} {
+		.${this.#editor_class} {
 			background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAQCAYAAADedLXNAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw1AUhU9TRZGKgxVFHTJUJwuiIo5ahSJUCLVCqw4mL/2DJg1Jiouj4Fpw8Gex6uDirKuDqyAI/oC4ujgpukiJ9yWFFjFeeLyP8+45vHcfINRKTLPaxgFNt81kPCamM6tixysCCKEP/RiSmWXMSVICvvV1T91Ud1Ge5d/3Z3WrWYsBAZF4lhmmTbxBPL1pG5z3icOsIKvE58RjJl2Q+JHrisdvnPMuCzwzbKaS88RhYjHfwkoLs4KpEU8RR1RNp3wh7bHKeYuzVqqwxj35C0NZfWWZ67SGEcciliBBhIIKiijBRpR2nRQLSTqP+fgHXb9ELoVcRTByLKAMDbLrB/+D37O1cpMTXlIoBrS/OM7HCNCxC9SrjvN97Dj1EyD4DFzpTX+5Bsx8kl5tapEjoGcbuLhuasoecLkDDDwZsim7UpCWkMsB72f0TRmg9xboWvPm1jjH6QOQolklboCDQ2A0T9nrPu/ubJ3bvz2N+f0AQ4pylAV8ZIgAAAAGYktHRAATAP8AAGCbYsAAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfnAQwXHCEDVO9kAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAABBJREFUGNNjYBgFFIAWdAEAChQAhQOVECQAAAAASUVORK5CYII=');
 			width: 500px;
 			display: inline-block;
@@ -37,7 +43,7 @@ class SimpleTextEditor {
 			border-bottom: 1px solid rgb(196, 160, 0);
 		}
 
-		.lineCounter-class-${this.#commonid} {
+		.${this.#line_counter_class} {
 			margin: 0;
 			border-radius: 0;
 			-moz-box-sizing: border-box;
@@ -58,7 +64,7 @@ class SimpleTextEditor {
 			border-bottom: 1px solid gold;
 		}
 
-		.lineCounter-class-${this.#commonid}:focus-visible, .editor-class-${this.#commonid}:focus-visible {
+		.${this.#line_counter_class}:focus-visible, .${this.#editor_class}:focus-visible {
 			outline: none;
 		}`, this.#commonid);
 	}
@@ -66,12 +72,12 @@ class SimpleTextEditor {
 	#cons() {
 		this.#lineCountCache = 0;
 		this.#blockerClass();
-		this.#lineCounter = this.#parent.mk("textarea").cls(`lineCounter-class-${this.#commonid}`);
-		this.#editor = this.#parent.mk("textarea").cls(`editor-class-${this.#commonid}`);
+		this.#lineCounter = this.#parent.mk("textarea").Cls(this.#line_counter_class);
+		this.#editor = this.#parent.mk("textarea").Cls(this.#editor_class);
 
 		this.#editor.on('scroll', () => {
-			this.#lineCounter.scrlTop(this.#editor.scrlTop());
-			this.#lineCounter.scrlLeft(this.#editor.scrlLeft());
+			this.#lineCounter.ScrollTop(this.#editor.ScrollTop());
+			this.#lineCounter.ScrollLeft(this.#editor.ScrollLeft());
 		});
 
 
@@ -83,13 +89,13 @@ class SimpleTextEditor {
 	}
 
 	#line_counter() {
-		var lineCount = this.#editor.val().split('\n').length;
+		var lineCount = this.#editor.Val().split('\n').length;
 		var outarr = [];
 		if (this.#lineCountCache != lineCount) {
 			for (var i = 0; i < lineCount; i++) {
 				outarr[i] = (i + 1) + '.';
 			}
-			this.#lineCounter.val(outarr.join('\n'));
+			this.#lineCounter.Val(outarr.join('\n'));
 		}
 		this.#lineCountCache = lineCount;
 	}

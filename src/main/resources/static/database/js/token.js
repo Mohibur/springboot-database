@@ -12,15 +12,19 @@ class RangeRules {
 	}
 }
 
-class TokenTypes {
-	static RANGE = "RANGE";
-	static SINGLE = "SINGLE";
-	static DOUBLE = "DOUBLE";
-	static NUMBER = "NUMBER";
-	static NEWLINE = "NEWLINE";
-	static WHITESPACE = "WHITESPACE";
-	static STARTEND = "STARTEND";
-}
+const TokenTypes = {}
+
+Object.defineProperties(TokenTypes, {
+	RANGE: { value: "RANGE", writable: false },
+	SINGLE: { value: "SINGLE", writable: false },
+	DOUBLE: { value: "DOUBLE", writable: false },
+	NUMBER: { value: "NUMBER", writable: false },
+	NEWLINE: { value: "NEWLINE", writable: false },
+	WHITESPACE: { value: "WHITESPACE", writable: false },
+	STARTEND: { value: "STARTEND", writable: false },
+	MULTILINE: { value: "MULTILINE", writable: false },
+	RANGE: { value: "RANGE", writable: false }
+});
 
 class Token {
 	#token;

@@ -24,11 +24,11 @@
 	</tfoot>
 </table>
 <script>
-$("#insertButton").click(function() {
+$("#insertButton").On("click", function() {
 	let cols = "";
 	let values = "";
 
-	$("#tableWindow").$$("tr").each(r => {
+	$("#tableWindow").zz("tr").each(r => {
 		let v = r.cell(0).html();
 		if(cols == "") {
 			cols += "    \`" + v + "\`\n";
@@ -42,21 +42,21 @@ $("#insertButton").click(function() {
 			values += "  , <" + v + ">\n";
 		}
 	})
-	w.textEditor.text("INSERT INTO " + $("#tableName").val() + "(\n" + cols + ")\nVALUES(\n" + values +");");
+	w.sqlText("INSERT INTO " + $("#tableName").val() + "(\n" + cols + ")\nVALUES(\n" + values +");");
 })
 
 	$("#deleteButton").click(function() {
-		w.textEditor.text('DROP TABLE ' +  $('#tableName').val() + ';')
+		w.sqlText ('DROP TABLE ' +  $('#tableName').val() + ';')
 	})
 
 	$("#truncateButton").click(function() {
-		w.textEditor.text('TRUNCATE TABLE ' +  $('#tableName').val() + ';');
+		w.sqlText('TRUNCATE TABLE ' +  $('#tableName').val() + ';');
 	})
 
 	$("#selectQuery").click(function () {
 	let cols = "";
 
-	$("#tableWindow").$$("tr").each(r => {
+	$("#tableWindow").zz("tr").each(r => {
 		let v = r.cell(0).html();
 		if(cols == "") {
 			cols += "    \`" + v + "\`\n";
@@ -64,7 +64,7 @@ $("#insertButton").click(function() {
 			cols += "  , \`" + v + "\`\n";
 		}
 	})
-	w.textEditor.text("SELECT \n" + cols + "FROM " + $("#tableName").val() + "\n;");
+	w.sqlText("SELECT \n" + cols + "FROM " + $("#tableName").val() + "\n;");
 })
 
 
@@ -74,9 +74,8 @@ $("#javaCode").on("click", function () {
 		.addData($("#tableName"))
 		.success((data) => {
 			if(data.status == true) {
-				//$("#javaCodeWindow").html(data.result);
-				w.javaCodeEditor.val(data.result);
-				w.javaCodeWindow.show($("#tableName").val());
+				//w.javaCodeEditor.val();
+				$("#javaCodeEditorWindow").contentWindow.editor.setValue(data.result, 1);
 			} else {
 				alert("What!?");
 			}
@@ -88,7 +87,7 @@ w.processTableInfo = function(data, tblName) {
 		$("#cption").html(tblName);
 		let tableWindow = $("#tableWindow").html("");
 		$("#tableName").val(tblName);
-		w.textEditor.text("SELECT * FROM " + tblName + ";");
+		w.sqlText("SELECT * FROM " + tblName + ";");
 		$("#table-footer").show();
 		for (let i = 1; i < data.result.length; i++) {
 			let e = data.result[i];

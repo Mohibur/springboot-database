@@ -179,8 +179,8 @@ class Ajax {
 	}
 
 	addData(name, value) {
-		if (typeof name != "string" && name instanceof GeneralHTMLProcessor) {
-			let n = name.name() == null || name.name() == "" ? name.id() : name.name()
+		if (typeof name != "string" && name instanceof HTMLElement) {
+			let n = name.Name() == null || name.Name() == "" ? name.Id() : name.Name()
 			this.#allData[n] = name.val();
 			return this;
 		}

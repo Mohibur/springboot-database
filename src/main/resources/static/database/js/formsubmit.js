@@ -4,17 +4,19 @@ const FORM_SUBMIT_VER = "1.0.0";
 class FormSubmit {
 	#form;
 	constructor() {
-		this.#form = $.mk("form").hide().target("_blank").id($.makeid())
+		this.#form = $.mk("form").Hide().Target("_blank").Id($.makeid())
 		return this;
 	}
 
 	add(name, val) {
 		let output = name;
-		if (typeof name != "string" && name instanceof GeneralHTMLProcessor) {
-			val = name.val();
-			output = name.name() == null || name.name() == "" ? name.id() : name.name()
+		if (typeof name != "string") {
+			val = name.Val();
+			output = name.Name() == null || name.Name() == "" ? name.Id() : name.Name()
 		}
-		this.#form.child("input").type("hidden").name(output).val(val);
+
+		this.#form.mk("input").Type("hidden").Name(output).Val(val);
+
 		return this;
 	}
 
@@ -39,12 +41,12 @@ class FormSubmit {
 	}
 
 	post() {
-		this.#form.method("POST");
-		this.#form.submit();
+		this.#form.Method("POST");
+		this.#form.Submit();
 	}
 
 	reset() {
-		this.#form.html("");
+		this.#form.Html("");
 		return this;
 	}
 }

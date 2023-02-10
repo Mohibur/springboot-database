@@ -11,8 +11,8 @@ class PopUpWindow {
 	constructor(selector) {
 		this.#commonid = $.makeid();
 		this.#blockerClass()
-		this.#blocker = $(document.body).child("div");
-		this.#blocker.cls("blocker-class-" + this.#commonid);
+		this.#blocker = document.body.mk("div");
+		this.#blocker.Cls("blocker-class-" + this.#commonid);
 		this.#popup = $(selector);
 		this.createHeaderBlock();
 		this.#beforeClose = function() { return true; };
@@ -74,11 +74,11 @@ class PopUpWindow {
 	}
 
 	createHeaderBlock() {
-		this.#holderTable = this.#blocker.mk("table").cls("table-holder-class-" + this.#commonid);
+		this.#holderTable = this.#blocker.mk("table").Cls("table-holder-class-" + this.#commonid);
 		let banner = this.#holderTable.row().cell();
-		banner.cls("banner-class-" + this.#commonid);
-		this.#caption = banner.mk("div").cls("caption-class-" + this.#commonid);
-		let closeButton = banner.mk("button").cls("close-button-class-" + this.#commonid).html("x");
+		banner.Cls("banner-class-" + this.#commonid);
+		this.#caption = banner.mk("div").Cls("caption-class-" + this.#commonid);
+		let closeButton = banner.mk("button").Cls("close-button-class-" + this.#commonid).html("x");
 		closeButton.click(function(obj) {
 			return function() {
 				obj.#beforeClose();
@@ -86,7 +86,7 @@ class PopUpWindow {
 				obj.#afterClose();
 			}
 		}(this));
-		this.#holderTable.row().cell().append(this.#popup);
+		this.#holderTable.Row().Cell().Append(this.#popup);
 	}
 
 	show(caption) {
@@ -120,7 +120,7 @@ class PopUpWindow {
 	hide() {
 		this.#blocker.hide();
 	}
-	
+
 	close() {
 		this.#blocker.hide();
 	}

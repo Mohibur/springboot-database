@@ -1,4 +1,26 @@
 "use strict";
+
+/*
+	* extension added to
+	* * Object 
+	* * String
+	* * Array
+	* * Date
+*/
+
+// all Objects
+Object.prototype.isObject = () => true;
+Object.prototype.isString = () => false;
+Object.prototype.isFunction = () => false;
+Object.prototype.isArray = () => false;
+
+
+// Function
+Object.prototype.isFunction = () => true;
+
+// String
+String.prototype.isString = () => true;
+
 String.prototype.matchCount = function(reg) {
 	return ([...this.matchAll(reg)] || []).length;
 }
@@ -12,18 +34,21 @@ String.prototype.toFloat = function() {
 }
 
 String.prototype.toNumber = function() {
-	return number(this);
+	return Number(this);
 }
 
+String.prototype.toBoolean = String.prototype.toBool = function() {
+	if (this === "0" || this.toLowerCase() === "false") return false;
+	if (this === "1" || this.toLowerCase() === "true") return true;
+	return NaN;
+}
 
 String.prototype.isTrue = function() {
-	if ((this !== "0" && this.toLowerCase !== "false") || this.toLowerCase === "true") return true;
-	return false;
+	return this.toLowerCase() === "true" || this.toLowerCase() === "1" || this.toLowerCase() == "yes";
 }
 
 String.prototype.isFalse = function(v) {
-	if (this === "0" || this.toLowerCase() === "false") return true;
-	return false;
+	return this === "0" || this.toLowerCase() === "false" || this.toLocaleUpperCase() == "no";
 }
 
 String.prototype.encode = function() {
@@ -35,16 +60,33 @@ String.prototype.encode = function() {
 		.replaceAll(/>/g, "&gt;")
 }
 
-Array.prototype.each = function(f) {
-	this.forEach((e, i) => f(e, i));
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////Array Class///////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+Object.prototype.isArray = () => true;
+
+
+Array.prototype.each = Array.prototype.forEach;
+
+Array.prototype.contains = Array.prototype.includes;
+
+Array.prototype.has = Array.prototype.includes;
+
+Array.prototype.match = function(v, s) {
+	if (typeof s == "undefined" || s == null || !isNaN(parseInt(s))) s = 0;
+	for (let i = s; i < this.length; i++) {
+		if (this[i].match(v)) return i;
+	}
 }
 
-Array.prototype.contains = function(v) {
-	return this.includes(v);
-}
-
-Array.prototype.has = function(v) {
-	return this.includes(v);
+Array.prototype.matchesAll = function(v, s) {
+	if (typeof s == "undefined" || s == null || !isNaN(parseInt(s))) s = 0;
+	let r = [];
+	for (let i = s; i < this.length; i++) {
+		if (this[i].match(v)) r.push(i);
+	}
+	return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +99,7 @@ Date.prototype.formattedDate = function() {
 }
 
 Date.prototype.jpFormattedDate = function() {
-	return (this.getFullYear()) + "年" + this.paddedMonth() + "月" + this.paddedMonth() + "日";
+	return (this.getFullYear()) + "年" + this.paddedMonth() + "月" + this.paddedDate() + "日";
 }
 
 Date.prototype.toString = function() {
@@ -74,7 +116,12 @@ Date.prototype.getShortMonth = function() {
 
 Date.prototype.paddedMonth = function() {
 	let m = this.getMonth() + 1;
-	return m < 10 ? "0" + m : m + "";
+	return m < 10 ? "0" + m : "" + m;
+}
+
+Date.prototype.paddedDate = function() {
+	let d = this.getDate();
+	return d < 10 ? "0" + d : "" + d;
 }
 
 Date.prototype.getFullDay = function() {
@@ -89,12 +136,9 @@ Date.prototype.printCalendarFirstDate = function() {
 	return new Date(this.getFullYear(), this.getMonth(), 1 - new Date(this.getFullYear(), this.getMonth(), 1).getDay());
 };
 
-Date.prototype.paddedDate = function() {
-	return this.getDate() < 10 ? "0" + this.getDate() : this.getDate() + "";
-}
 
 
-/////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 //\\ JUMP
 Date.prototype.nextMonth = function() {

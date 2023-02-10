@@ -6,20 +6,24 @@
 <script>
 	window.w = {};
 </script>
-<script src="/database/js/commons.js"></script>
-<script src="/database/js/string-ext.js"></script>
+<style type="text/css" media="screen">
+iframe {
+	height: 400px;
+	width: 500px;
+}
+</style>
+<script src="/database/js/simple-html.js"></script>
+<script src="/database/js/javascript-ext.js"></script>
 <script src="/database/js/ajax/ajax.js"></script>
 <script src="/database/js/ajax/httpstatus.js"></script>
 <script src="/database/js/ajax/mediatypes.js"></script>
 <script src="/database/js/popup.js"></script>
 <script src="/database/js/tabs.js"></script>
-<script src="/database/js/simpletexteditor.js"></script>
 <script src="/database/js/formsubmit.js"></script>
-
 <script src="/database/js/token.js"></script>
 <script src="/database/js/tokenize.js"></script>
 <script src="/database/js/token-sql.js"></script>
-<script src="/database/js/token-java.js"></script>
+
 </head>
 <body>
 	<table>
@@ -33,10 +37,9 @@
 			<td style="vertical-align: top; border: 1px solid #afafaf20;">
 				<div id="main-tab-window" style="width: 100%"></div>
 			</td>
-			<td style="vertical-align: top; border: 1px solid #afafaf20;">
-				<th:block th:insert="~{zznotforproductiondatabase/desctable}"></th:block>
-				<th:block th:insert="~{zznotforproductiondatabase/form}"></th:block>
-			</td>
+			<td style="vertical-align: top; border: 1px solid #afafaf20;"><th:block
+					th:insert="~{zznotforproductiondatabase/desctable}"></th:block> <th:block
+					th:insert="~{zznotforproductiondatabase/form}"></th:block></td>
 		</tr>
 		<tr>
 			<td colspan=2 style="vertical-align: top">
@@ -59,16 +62,15 @@
 			<span id="executionTime"></span>
 		</div>
 
-		<div id="textEditor"></div>
+		<div id="textEditor2">
+			<!-- <div id="textEditor"></div> -->
+			<iframe id="textEditor" src="/database/static/editor.html"></iframe>
+		</div>
 	</div>
 	<div class="history" id="history"></div>
-	<div id="javaCodeWindow"></div>
-	<script>
-		w.tabWindow = new TabWindow("#main-tab-window").add("tab-editorWindow",
-				"Editor", "#edtorWindow", true).add("tab-history", "History",
-				"#history", false);
-		w.textEditor = new SimpleTextEditor("#textEditor");
-	</script>
+	<div id="javaCodeWindow">
+		<iframe id="javaCodeEditorWindow" src="/database/static/editor.html"></iframe>
+	</div>
 	<th:block th:insert="~{zznotforproductiondatabase/javascript}"></th:block>
 	<th:block th:insert="~{zznotforproductiondatabase/test}"></th:block>
 </body>
